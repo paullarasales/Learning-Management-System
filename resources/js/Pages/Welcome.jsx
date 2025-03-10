@@ -300,17 +300,15 @@ export default function Welcome({ auth }) {
                     </div>
                 </div>
 
-                {["guide", "developers", "contact"].map((section) => (
-                    <section
-                        key={section}
-                        id={section}
-                        className="section h-screen flex items-center justify-center bg-white text-center px-6"
-                    >
-                        <h2 className="text-3xl font-bold fade-in text-gray-800">
-                            {section.charAt(0).toUpperCase() + section.slice(1)}
-                        </h2>
-                    </section>
-                ))}
+                <section
+                    id="guide"
+                    className="section h-screen flex items-center justify-center bg-red-500"
+                ></section>
+
+                <section
+                    id="developers"
+                    className="section h-screen flex items-center justify-center bg-blue-500"
+                ></section>
             </div>
         </>
     );
