@@ -79,16 +79,16 @@ export default function Welcome({ auth }) {
             });
         });
 
-        // Floating effect for images
-        gsap.utils.toArray(".floating-image").forEach((image) => {
-            gsap.to(image, {
-                y: 10,
-                duration: 2,
-                ease: "power1.inOut",
-                repeat: -1,
-                yoyo: true,
-            });
-        });
+        // // Floating effect for images
+        // gsap.utils.toArray(".floating-image").forEach((image) => {
+        //     gsap.to(image, {
+        //         y: 10,
+        //         duration: 2,
+        //         ease: "power1.inOut",
+        //         repeat: -1,
+        //         yoyo: true,
+        //     });
+        // });
 
         return () => {
             // Cleanup animations when component unmounts
@@ -122,7 +122,7 @@ export default function Welcome({ auth }) {
                         </h1>
                     </div>
                     <div className="flex-1 flex justify-center">
-                        <ul className="flex space-x-6 text-gray-700 font-medium">
+                        <ul className="flex space-x-12 text-gray-700 font-medium">
                             {[
                                 "home",
                                 "features",
@@ -174,7 +174,7 @@ export default function Welcome({ auth }) {
                     >
                         Enhancing Education with Our Interactive Learning System
                     </h1>
-                    <p className="fade-in text-xl text-gray-600 max-w-2xl">
+                    <p className="fade-in text-xl text-gray-600 max-w-2xl mt-3">
                         Easily access and manage learning materials in one
                         place.
                     </p>
