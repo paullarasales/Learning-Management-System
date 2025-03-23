@@ -100,14 +100,6 @@ export default function Welcome({ auth }) {
         };
     }, []);
 
-    useEffect(() => {
-        document.body.style.overflow = "hidden";
-
-        return () => {
-            document.body.style.overflow = "auto";
-        };
-    }, []);
-
     const scrollToSection = (e, target) => {
         e.preventDefault();
         gsap.to(window, {
@@ -120,7 +112,7 @@ export default function Welcome({ auth }) {
     return (
         <>
             <Head title="Learning Management Repository" />
-            <div className="relative bg-[#f9f9f9] text-black overflow-x-hidden font-poppins">
+            <div className="relative bg-[#f9f9f9] text-black overflow-x-hidden font-poppins scroll-container">
                 {/* Navbar */}
                 <nav className="fixed top-0 left-0 w-full bg-white z-50 py-4 px-8 flex items-center">
                     <div className="flex-1">
