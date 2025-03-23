@@ -100,6 +100,14 @@ export default function Welcome({ auth }) {
         };
     }, []);
 
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, []);
+
     const scrollToSection = (e, target) => {
         e.preventDefault();
         gsap.to(window, {
@@ -166,7 +174,7 @@ export default function Welcome({ auth }) {
 
                 <section
                     id="home"
-                    className="section min-h-screen h-scren flex flex-col items-center justify-center bg-white text-center px-6 pt-20"
+                    className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20"
                 >
                     <h1
                         id="hero-title"
@@ -178,36 +186,13 @@ export default function Welcome({ auth }) {
                         Easily access and manage learning materials in one
                         place.
                     </p>
-                    {/* <div className="fade-in mt-6">
-                        <Link
-                            href="/register"
-                            className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-lg hover:bg-blue-600 transition"
-                        >
-                            Get Started
-                        </Link>
-                    </div> */}
-                    <div className="relative h-[500px] w-full flex justify-center items-center">
-                        f
-                        <div className="absolute w-3/4 h-80 bg-blue-200 opacity-50 blur-3xl rounded-full"></div>
-                        <div className="relative w-full max-w-6xl grid grid-cols-3 gap-6">
-                            <img
-                                src="/images/left.jpg"
-                                alt="Learning Management System"
-                                className="floating-image fade-in-image transform rotate-[-12deg] scale-90 transition-all duration-500 hover:scale-105 hover:rotate-[-5deg] shadow-xl rounded-lg"
-                            />
 
-                            <img
-                                src="/images/mid.jpg"
-                                alt="Learning Management System"
-                                className="floating-image fade-in-image scale-110 shadow-2xl rounded-lg transition-all duration-500 hover:scale-115"
-                            />
-
-                            <img
-                                src="/images/right.jpg"
-                                alt="Learning Management System"
-                                className="floating-image fade-in-image transform rotate-[12deg] scale-90 transition-all duration-500 hover:scale-105 hover:rotate-[5deg] shadow-xl rounded-lg"
-                            />
-                        </div>
+                    <div className="w-full flex items-center justify-center mt-10">
+                        <img
+                            src="/images/Untitled.jpg"
+                            alt="Learning System"
+                            className="w-[50%] max-w-[1100px] h-auto object-contain"
+                        />
                     </div>
                 </section>
 
@@ -226,7 +211,7 @@ export default function Welcome({ auth }) {
                         {features.map((feature, index) => (
                             <div
                                 key={index}
-                                className={`feature-card p-6 bg-white shadow-lg rounded-lg flex flex-col items-center transition-all duration-500 hover:scale-105 ${
+                                className={`feature-card p-6 bg-white shadow-md rounded-lg flex flex-col items-center transition-all duration-500 hover:scale-105 ${
                                     index % 2 === 0
                                         ? "translate-y-4"
                                         : "-translate-y-4"
