@@ -8,21 +8,6 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 export default function Welcome({ auth }) {
     useEffect(() => {
-        // Fade-in animations for sections
-        gsap.utils.toArray(".fade-in").forEach((element) => {
-            gsap.from(element, {
-                opacity: 0,
-                y: 20,
-                duration: 2,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: element,
-                    start: "top 85%",
-                    toggleActions: "play none none none",
-                },
-            });
-        });
-
         gsap.utils.toA;
 
         // Image fade-in animation
@@ -64,6 +49,45 @@ export default function Welcome({ auth }) {
             gsap.killTweensOf(".feature-card");
             gsap.killTweensOf(".floating-image");
         };
+    }, []);
+
+    useEffect(() => {
+        // Set initial state (just to be safe, but Tailwind already did it)
+        gsap.set([".hero-title", ".title-description", ".hero-image"], {
+            opacity: 0,
+            y: 50,
+            visibility: "hidden",
+        });
+
+        gsap.set(".hero-wrapper", { opacity: 1 });
+
+        const tl = gsap.timeline({
+            defaults: { ease: "power3.out", duration: 1 },
+        });
+
+        tl.to(".hero-title", {
+            opacity: 1,
+            y: 0,
+            visibility: "visible",
+        })
+            .to(
+                ".title-description",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            )
+            .to(
+                ".hero-image",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            );
     }, []);
 
     const scrollToSection = (e, target) => {
@@ -129,15 +153,15 @@ export default function Welcome({ auth }) {
 
                 <section
                     id="home"
-                    className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20"
+                    className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20 opacity-0 hero-wrapper"
                 >
                     <h1
                         id="hero-title"
-                        className="text-7xl font-semibold fade-in color-changing text-gray-800"
+                        className="text-7xl font-semibold hero-title text-gray-800 opacity-0"
                     >
                         Enhancing Education with Our Interactive Learning System
                     </h1>
-                    <p className="fade-in text-xl text-gray-600 max-w-2xl mt-3">
+                    <p className="title-description text-xl text-gray-600 max-w-2xl mt-3 opacity-0">
                         Easily access and manage learning materials in one
                         place.
                     </p>
@@ -146,7 +170,7 @@ export default function Welcome({ auth }) {
                         <img
                             src="/images/Untitled.jpg"
                             alt="Learning System"
-                            className="w-[50%] max-w-[1100px] h-auto object-contain"
+                            className="w-[50%] max-w-[1100px] h-auto object-contain hero-image opacity-0"
                         />
                     </div>
                 </section>
