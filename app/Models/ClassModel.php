@@ -10,4 +10,10 @@ class ClassModel extends Model
     use HasFactory;
 
     protected $table = "classes";
+
+    protected $fillabl = [
+        'name',
+        'description',
+        'instructor_id',
+    ];
 }

@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Material extends Model
+class Submission extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'class_id',
-        'material_folder',
-        'title',
+        'assignment_id',
+        'student_id',
+        'assignment_folder'
     ];
 }

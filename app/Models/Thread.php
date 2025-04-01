@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Material extends Model
+class Thread extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'class_id',
-        'material_folder',
+        'user_id',
         'title',
+        'body'
     ];
 }
