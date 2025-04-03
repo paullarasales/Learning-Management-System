@@ -12,6 +12,8 @@ class Submission extends Model
     protected $fillable = [
         'assignment_id',
         'student_id',
-        'assignment_folder'
+        'assignment_folder',
+        'grade',
+        'feedback',
     ];
 }

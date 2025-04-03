@@ -12,7 +12,6 @@ class Thread extends Model
     protected $fillable = [
         'class_id',
         'user_id',
-        'title',
-        'body'
+        'message'
     ];
 }

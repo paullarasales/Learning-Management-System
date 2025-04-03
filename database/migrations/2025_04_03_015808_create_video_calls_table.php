@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('replies', function (Blueprint $table) {
+        Schema::create('video_calls', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('thread_id')->constrained('threads')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->text('message');
+            $table->foreignId('host_id')->constrained('users')->onDelete('cascade');
+            $table->string('room_id')->unique();
+            $table->string('host_peer_id')->nullable()->change();
+            $table->enum('status', ['not-started', 'started', 'ended'])->default('not-started');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('replies');
+        Schema::dropIfExists('video_calls');
     }
 };

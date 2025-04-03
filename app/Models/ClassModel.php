@@ -11,9 +11,11 @@ class ClassModel extends Model
 
     protected $table = "classes";
 
-    protected $fillabl = [
+    protected $fillable = [
         'name',
         'description',
         'instructor_id',
     ];
+
+
 }
