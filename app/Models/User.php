@@ -21,7 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
+        'contact_number',
+        'specialization',
+        'profile_picture',
+        'google_id'
     ];
 
     /**
@@ -46,7 +50,6 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
 
     public function classes()
     {
