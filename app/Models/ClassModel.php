@@ -17,5 +17,28 @@ class ClassModel extends Model
         'instructor_id',
     ];
 
+    public function instructor()
+    {
+        return $this->belongsToMany(User::class, 'instructor_id');
+    }
 
+    public function students()
+    {
+        return $this->belongsToMany(User::class, 'class_student', 'class_id', 'student_id');
+    }
+
+    public function materials()
+    {
+        return $this->hasMany(Material::class, 'class_id');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'class_id');
+    }
+
+    public function threads()
+    {
+        return $this->hasmany(Thread::class, 'class_id');
+    }
 }

@@ -16,4 +16,14 @@ class Submission extends Model
         'grade',
         'feedback',
     ];
+
+    public function assignment()
+    {
+        return $this->belongsTo(Assignment::class, 'assignment_id');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }
 }

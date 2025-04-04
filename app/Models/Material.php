@@ -14,4 +14,9 @@ class Material extends Model
         'material_folder',
         'title',
     ];
+
+    public function class()
+    {
+        return $this->belongsTo(ClassModel::class, 'class_id');
+    }
 }

@@ -12,4 +12,14 @@ class VideoCall extends Model
         'host_peer_id',
         'status'
     ];
+
+    public function host()
+    {
+        return $this->belongsTo(User::class, 'host_id');
+    }
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'video_call_participants');
+    }
 }

@@ -15,4 +15,14 @@ class Assignment extends Model
         'description',
         'due_date',
     ];
+
+    public function class()
+    {
+        return $this->belongsTo(ClassModel::class, 'class_id');
+    }
+
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'assignment_id');
+    }
 }

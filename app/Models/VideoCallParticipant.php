@@ -10,4 +10,14 @@ class VideoCallParticipant extends Model
         'video_call_id',
         'user_id'
     ];
+
+    public function videocall()
+    {
+        return $this->belongsTo(VideoCall::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

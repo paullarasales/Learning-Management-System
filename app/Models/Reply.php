@@ -14,4 +14,14 @@ class Reply extends Model
         'user_id',
         'message'
     ];
+
+    public function thread()
+    {
+        return $this->belongsTo(Thread::class, 'thread_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
