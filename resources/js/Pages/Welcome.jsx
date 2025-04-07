@@ -77,7 +77,7 @@ export default function Welcome({ auth }) {
     useEffect(() => {
         gsap.set(
             [
-                ".description",
+                ".feature-description",
                 ".description-title",
                 ".left-img",
                 ".right-top-img",
@@ -99,7 +99,7 @@ export default function Welcome({ auth }) {
             defaults: { ease: "power3.out", duration: 1 },
         });
 
-        tl.to(".description", {
+        tl.to(".feature-description", {
             opacity: 1,
             y: 0,
             visibility: "visible",
@@ -142,7 +142,96 @@ export default function Welcome({ auth }) {
             );
     }, []);
 
-    
+    useEffect(() => {
+        const steps = gsap.utils.toArray(".guide-step");
+
+        steps.forEach((step, i) => {
+            const direction = i % 2 === 0 ? -100 : 100;
+            gsap.from(step, {
+                x: direction,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: step,
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                },
+            });
+        });
+
+        return () => {
+            ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+        };
+    }, []);
+
+    useEffect(() => {
+        gsap.set(
+            [
+                ".about-description",
+                ".about-description-title",
+                ".title-desc",
+                ".img",
+                ".dev-card",
+            ],
+            {
+                opacity: 1,
+                y: 50,
+                visibility: "hidden",
+            }
+        );
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#about",
+                start: "top 80%",
+                toggleActions: "play none none none",
+            },
+            defaults: { ease: "power3.out", duration: 1 },
+        });
+
+        tl.to(".about-description", {
+            opacity: 1,
+            y: 0,
+            visibility: "visible",
+        })
+            .to(
+                ".about-description-title",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            )
+            .to(
+                ".title-desc",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            )
+            .to(
+                ".dev-card",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                    stagger: 0.15,
+                },
+                ">0.2"
+            )
+            .to(
+                ".img",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            );
+    }, []);
 
     const scrollToSection = (e, target) => {
         e.preventDefault();
@@ -233,7 +322,7 @@ export default function Welcome({ auth }) {
                     id="features"
                     className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20"
                 >
-                    <p className="text-xl text-blue-400 tracking-wide description">
+                    <p className="text-xl text-blue-400 tracking-wide feature-description">
                         Features
                     </p>
                     <h2 className="text-4xl font-semibold text-gray-800 tracking-wide description-title">
@@ -280,7 +369,7 @@ export default function Welcome({ auth }) {
                         {/* Steps */}
                         <div className="w-full flex flex-col gap-10">
                             <div className="flex justify-between items-center w-full">
-                                <div className="w-1/2 text-right pr-10">
+                                <div className="w-1/2 text-right pr-10 guide-step">
                                     <h3 className="text-lg font-bold guide-step-1">
                                         Register & Log In
                                     </h3>
@@ -296,7 +385,7 @@ export default function Welcome({ auth }) {
                             <div className="flex justify-between items-center w-full">
                                 <div className="w-1/2"></div>
                                 <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
-                                <div className="w-1/2 text-left pl-10">
+                                <div className="w-1/2 text-left pl-10 guide-step">
                                     <h3 className="text-lg font-bold guide-step-2">
                                         Wait for Instructor
                                     </h3>
@@ -307,7 +396,7 @@ export default function Welcome({ auth }) {
                             </div>
 
                             <div className="flex justify-between items-center w-full">
-                                <div className="w-1/2 text-right pr-10">
+                                <div className="w-1/2 text-right pr-10 guide-step">
                                     <h3 className="text-lg font-bold guide-step-3">
                                         Explore Class Dashboard
                                     </h3>
@@ -323,7 +412,7 @@ export default function Welcome({ auth }) {
                             <div className="flex justify-between items-center w-full">
                                 <div className="w-1/2"></div>
                                 <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
-                                <div className="w-1/2 text-left pl-10">
+                                <div className="w-1/2 text-left pl-10 guide-step">
                                     <h3 className="text-lg font-bold guide-step-4">
                                         Submit Assignments
                                     </h3>
@@ -335,7 +424,7 @@ export default function Welcome({ auth }) {
                             </div>
 
                             <div className="flex justify-between items-center w-full">
-                                <div className="w-1/2 text-right pr-10">
+                                <div className="w-1/2 text-right pr-10 guide-step">
                                     <h3 className="text-lg font-bold guide-step-5">
                                         Attend Live Classes
                                     </h3>
@@ -351,7 +440,7 @@ export default function Welcome({ auth }) {
                             <div className="flex justify-between items-center w-full">
                                 <div className="w-1/2"></div>
                                 <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
-                                <div className="w-1/2 text-left pl-10">
+                                <div className="w-1/2 text-left pl-10 guide-step">
                                     <h3 className="text-lg font-bold guide-step-6">
                                         Check Grades and & Updates
                                     </h3>
@@ -370,14 +459,14 @@ export default function Welcome({ auth }) {
                 >
                     {/* Title & Description */}
                     <div className="text-center mb-12">
-                        <p className="text-xl text-blue-500 tracking-widest font-medium uppercase">
+                        <p className="text-xl text-blue-500 tracking-widest font-medium uppercase about-description">
                             Our Team
                         </p>
-                        <h2 className="text-5xl font-bold text-gray-800 mt-2">
+                        <h2 className="text-5xl font-bold text-gray-800 mt-2 about-description-title">
                             Meet the Creators
                         </h2>
                         <div className="w-16 h-1 bg-blue-500 mx-auto mt-3"></div>
-                        <p className="text-gray-600 max-w-2xl mx-auto mt-4 text-lg">
+                        <p className="text-gray-600 max-w-2xl mx-auto mt-4 text-lg title-desc">
                             We are students from Pangasinan State University,
                             passionate about bringing innovative solutions to
                             life.
@@ -385,7 +474,7 @@ export default function Welcome({ auth }) {
                     </div>
 
                     {/* Grid Layout for Developers */}
-                    <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                    <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 img">
                         {[
                             {
                                 name: "John Paul Sales",
@@ -410,7 +499,7 @@ export default function Welcome({ auth }) {
                         ].map((dev, index) => (
                             <div
                                 key={index}
-                                className={`relative group transform transition duration-500 hover:-translate-y-3 ${
+                                className={`relative group dev-card transform transition duration-500 hover:-translate-y-3 ${
                                     index % 2 !== 0 ? "md:-translate-y-6" : ""
                                 }`}
                             >
