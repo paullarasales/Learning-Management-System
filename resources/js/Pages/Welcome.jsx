@@ -26,28 +26,12 @@ export default function Welcome({ auth }) {
             });
         });
 
-        // Feature cards animation
-        gsap.utils.toArray(".feature-card").forEach((card, index) => {
-            gsap.from(card, {
-                opacity: 0,
-                x: index % 2 === 0 ? -100 : 100,
-                duration: 1.2,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 85%",
-                    toggleActions: "play none none none",
-                },
-            });
-        });
-
         return () => {
             // Cleanup animations when component unmounts
             ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
             gsap.killTweensOf(".fade-in");
             gsap.killTweensOf(".fade-in-image");
             gsap.killTweensOf(".feature-card");
-            gsap.killTweensOf(".floating-image");
         };
     }, []);
 
@@ -90,6 +74,76 @@ export default function Welcome({ auth }) {
             );
     }, []);
 
+    useEffect(() => {
+        gsap.set(
+            [
+                ".description",
+                ".description-title",
+                ".left-img",
+                ".right-top-img",
+                ".right-bottom-img",
+            ],
+            {
+                opacity: 0,
+                y: 50,
+                visibility: "hidden",
+            }
+        );
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#features",
+                start: "top 80%",
+                toggleActions: "play none none none",
+            },
+            defaults: { ease: "power3.out", duration: 1 },
+        });
+
+        tl.to(".description", {
+            opacity: 1,
+            y: 0,
+            visibility: "visible",
+        })
+            .to(
+                ".description-title",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            )
+            .to(
+                ".left-img",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            )
+            .to(
+                ".right-top-img",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            )
+            .to(
+                ".right-bottom-img",
+                {
+                    opacity: 1,
+                    y: 0,
+                    visibility: "visible",
+                },
+                ">0.2"
+            );
+    }, []);
+
+    
+
     const scrollToSection = (e, target) => {
         e.preventDefault();
         gsap.to(window, {
@@ -104,10 +158,10 @@ export default function Welcome({ auth }) {
             <Head title="Learning Management Repository" />
             <div className="relative bg-[#f9f9f9] text-black overflow-x-hidden font-poppins scroll-container">
                 {/* Navbar */}
-                <nav className="fixed top-0 left-0 w-full bg-white z-50 py-4 px-8 flex items-center justify-around">
+                <nav className="fixed top-0 left-0 w-full bg-white z-50 py-4 px-8 flex items-center justify-around h-14">
                     <div className="w-3/6 flex items-center gap-1">
                         <h1 className="text-2xl font-semibold">E D U</h1>
-                        <img src="logo/paul.png" alt="" className="h-12 w-14" />
+                        <img src="logo/paul.png" alt="" className="h-10 w-12" />
                     </div>
                     <div className="w-3/6 flex justify-center">
                         <ul className="flex space-x-12 text-gray-700 font-medium">
@@ -133,7 +187,7 @@ export default function Welcome({ auth }) {
                         </ul>
                     </div>
                     <div className="w-3/6 flex justify-end">
-                        {auth ? (
+                        {auth && auth.user ? (
                             <Link
                                 href="/dashboard"
                                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
@@ -143,9 +197,9 @@ export default function Welcome({ auth }) {
                         ) : (
                             <Link
                                 href="/login"
-                                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                                className="text-gray-700 px-4 py-2 font-medium transition"
                             >
-                                Login/Register
+                                Sign in
                             </Link>
                         )}
                     </div>
@@ -157,7 +211,7 @@ export default function Welcome({ auth }) {
                 >
                     <h1
                         id="hero-title"
-                        className="text-7xl font-semibold hero-title text-gray-800 opacity-0"
+                        className="text-6xl font-semibold hero-title text-gray-800 opacity-0"
                     >
                         Enhancing Education with Our Interactive Learning System
                     </h1>
@@ -179,14 +233,12 @@ export default function Welcome({ auth }) {
                     id="features"
                     className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20"
                 >
-                    <p className="text-xl text-blue-400 tracking-wide">
+                    <p className="text-xl text-blue-400 tracking-wide description">
                         Features
                     </p>
-                    <h2 className="text-4xl font-semibold text-gray-800 tracking-wide">
-                        Discover tools that simplify,
-                    </h2>
-                    <h2 className="text-4xl font-semibold text-gray-800 tracking-wide">
-                        enhance, and transform your learning experience.
+                    <h2 className="text-4xl font-semibold text-gray-800 tracking-wide description-title">
+                        Discover tools that simplify, Enhance, and transform
+                        your learning experience.
                     </h2>
 
                     <div className="h-[80vh] w-11/12 flex gap-6 mt-6">
@@ -194,7 +246,7 @@ export default function Welcome({ auth }) {
                             <img
                                 src="/images/video.png"
                                 alt="Learning System"
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-contain left-img"
                             />
                         </div>
 
@@ -203,14 +255,14 @@ export default function Welcome({ auth }) {
                                 <img
                                     src="/images/materials.png"
                                     alt="Materials"
-                                    className="w-full h-full object-contain"
+                                    className="w-full h-full object-contain right-top-img"
                                 />
                             </div>
                             <div className="h-1/2 rounded-2xl shadow-lg overflow-hidden flex items-center justify-center">
                                 <img
                                     src="/images/assignment.png"
                                     alt="Assignment"
-                                    className="w-full h-full object-contain"
+                                    className="w-full h-full object-contain right-bottom-img"
                                 />
                             </div>
                         </div>
@@ -229,10 +281,10 @@ export default function Welcome({ auth }) {
                         <div className="w-full flex flex-col gap-10">
                             <div className="flex justify-between items-center w-full">
                                 <div className="w-1/2 text-right pr-10">
-                                    <h3 className="text-lg font-bold">
+                                    <h3 className="text-lg font-bold guide-step-1">
                                         Register & Log In
                                     </h3>
-                                    <p className="text-gray-600">
+                                    <p className="text-gray-600 guide-step-desc-1">
                                         Create an account and access your
                                         dashboard
                                     </p>
@@ -245,10 +297,10 @@ export default function Welcome({ auth }) {
                                 <div className="w-1/2"></div>
                                 <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
                                 <div className="w-1/2 text-left pl-10">
-                                    <h3 className="text-lg font-bold">
+                                    <h3 className="text-lg font-bold guide-step-2">
                                         Wait for Instructor
                                     </h3>
-                                    <p className="text-gray-600">
+                                    <p className="text-gray-600 guide-step-desc-2">
                                         Your instructor will add you to class.
                                     </p>
                                 </div>
@@ -256,10 +308,10 @@ export default function Welcome({ auth }) {
 
                             <div className="flex justify-between items-center w-full">
                                 <div className="w-1/2 text-right pr-10">
-                                    <h3 className="text-lg font-bold">
+                                    <h3 className="text-lg font-bold guide-step-3">
                                         Explore Class Dashboard
                                     </h3>
-                                    <p className="text-gray-600">
+                                    <p className="text-gray-600 guide-step-desc-3">
                                         Find discussions, materials, and
                                         assignments.
                                     </p>
@@ -272,10 +324,10 @@ export default function Welcome({ auth }) {
                                 <div className="w-1/2"></div>
                                 <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
                                 <div className="w-1/2 text-left pl-10">
-                                    <h3 className="text-lg font-bold">
+                                    <h3 className="text-lg font-bold guide-step-4">
                                         Submit Assignments
                                     </h3>
-                                    <p className="text-gray-600">
+                                    <p className="text-gray-600 guide-step-desc-4">
                                         View and complete tasks before the
                                         deadline.
                                     </p>
@@ -284,10 +336,10 @@ export default function Welcome({ auth }) {
 
                             <div className="flex justify-between items-center w-full">
                                 <div className="w-1/2 text-right pr-10">
-                                    <h3 className="text-lg font-bold">
+                                    <h3 className="text-lg font-bold guide-step-5">
                                         Attend Live Classes
                                     </h3>
-                                    <p className="text-gray-600">
+                                    <p className="text-gray-600 guide-step-desc-5">
                                         Join live sessions and interact in
                                         real-time.
                                     </p>
@@ -300,10 +352,10 @@ export default function Welcome({ auth }) {
                                 <div className="w-1/2"></div>
                                 <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
                                 <div className="w-1/2 text-left pl-10">
-                                    <h3 className="text-lg font-bold">
+                                    <h3 className="text-lg font-bold guide-step-6">
                                         Check Grades and & Updates
                                     </h3>
-                                    <p className="text-gray-600">
+                                    <p className="text-gray-600 guide-step-desc-6">
                                         Stay updated with the feedback and
                                         announcement.
                                     </p>

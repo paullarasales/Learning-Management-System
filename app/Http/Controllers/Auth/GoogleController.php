@@ -7,7 +7,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
-use App\Model\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class GoogleController extends Controller
@@ -45,6 +45,10 @@ class GoogleController extends Controller
             }
 
             Auth::login($user);
+
+            if ($user->role === 'admin') {
+                return redirect()->intented('/admin/dashboard');
+            }
 
             return redirect()->intended('/dashboard');
         } catch (\Exception $e) {
