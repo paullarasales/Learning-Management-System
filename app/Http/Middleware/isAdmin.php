@@ -17,7 +17,7 @@ class isAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && Auth::user()->role !== 'admin') {
-            return redirect()->intented('admin.dashboard');
+            return redirect()->intended('dashboard');
         }
         return $next($request);
     }
