@@ -36,23 +36,26 @@ export default function Welcome({ auth }) {
     }, []);
 
     useEffect(() => {
-        // Set initial state (just to be safe, but Tailwind already did it)
-        gsap.set([".hero-title", ".title-description", ".hero-image"], {
+        // Initial styles
+        gsap.set([".title-description", ".hero-image"], {
             opacity: 0,
             y: 50,
             visibility: "hidden",
         });
 
         gsap.set(".hero-wrapper", { opacity: 1 });
+        gsap.set(".word", { opacity: 0, y: 20, visibility: "hidden" });
 
         const tl = gsap.timeline({
-            defaults: { ease: "power3.out", duration: 1 },
+            defaults: { ease: "power3.out", duration: 0.6 },
         });
 
-        tl.to(".hero-title", {
+        // Animate each word with stagger
+        tl.to(".word", {
             opacity: 1,
             y: 0,
             visibility: "visible",
+            stagger: 0.08,
         })
             .to(
                 ".title-description",
@@ -61,7 +64,7 @@ export default function Welcome({ auth }) {
                     y: 0,
                     visibility: "visible",
                 },
-                ">0.2"
+                ">0.3"
             )
             .to(
                 ".hero-image",
@@ -70,76 +73,82 @@ export default function Welcome({ auth }) {
                     y: 0,
                     visibility: "visible",
                 },
-                ">0.2"
+                ">0.3"
             );
     }, []);
 
     useEffect(() => {
-        gsap.set(
-            [
-                ".feature-description",
-                ".description-title",
-                ".left-img",
-                ".right-top-img",
-                ".right-bottom-img",
-            ],
-            {
-                opacity: 0,
-                y: 50,
-                visibility: "hidden",
-            }
-        );
+        gsap.from(".feature-title", {
+            opacity: 0,
+            y: 50,
+            stagger: 0.2,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#features",
+                start: "top 80%",
+            },
+        });
+    }, []);
+
+    // feature-card
+    useEffect(() => {
+        gsap.from(".feature-card-left", {
+            opacity: 0,
+            x: -100,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#features",
+                start: "top 80%",
+            },
+        });
+
+        gsap.from(".feature-card-center", {
+            opacity: 0,
+            x: 50,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#features",
+                start: "top 80%",
+            },
+        });
+
+        gsap.from(".feature-card-right", {
+            opacity: 0,
+            x: 100,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#features",
+                start: "top 80%",
+            },
+        });
+    }, []);
+
+    useEffect(() => {
+        gsap.set(".feature-word", {
+            opacity: 0,
+            y: 30,
+            visibility: "hidden",
+        });
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: "#features",
                 start: "top 80%",
-                toggleActions: "play none none none",
             },
-            defaults: { ease: "power3.out", duration: 1 },
         });
 
-        tl.to(".feature-description", {
+        tl.to(".feature-word", {
             opacity: 1,
             y: 0,
             visibility: "visible",
-        })
-            .to(
-                ".description-title",
-                {
-                    opacity: 1,
-                    y: 0,
-                    visibility: "visible",
-                },
-                ">0.2"
-            )
-            .to(
-                ".left-img",
-                {
-                    opacity: 1,
-                    y: 0,
-                    visibility: "visible",
-                },
-                ">0.2"
-            )
-            .to(
-                ".right-top-img",
-                {
-                    opacity: 1,
-                    y: 0,
-                    visibility: "visible",
-                },
-                ">0.2"
-            )
-            .to(
-                ".right-bottom-img",
-                {
-                    opacity: 1,
-                    y: 0,
-                    visibility: "visible",
-                },
-                ">0.2"
-            );
+            stagger: 0.08,
+            ease: "power3.out",
+            duration: 0.6,
+        });
     }, []);
 
     useEffect(() => {
@@ -170,11 +179,10 @@ export default function Welcome({ auth }) {
                 ".about-description",
                 ".about-description-title",
                 ".title-desc",
-                ".img",
                 ".dev-card",
             ],
             {
-                opacity: 1,
+                opacity: 0,
                 y: 50,
                 visibility: "hidden",
             }
@@ -218,18 +226,9 @@ export default function Welcome({ auth }) {
                     opacity: 1,
                     y: 0,
                     visibility: "visible",
-                    stagger: 0.15,
+                    stagger: 0.3,
                 },
-                ">0.2"
-            )
-            .to(
-                ".img",
-                {
-                    opacity: 1,
-                    y: 0,
-                    visibility: "visible",
-                },
-                ">0.2"
+                ">0.3"
             );
     }, []);
 
@@ -247,10 +246,10 @@ export default function Welcome({ auth }) {
             <Head title="Learning Management Repository" />
             <div className="relative bg-[#f9f9f9] text-black overflow-x-hidden font-poppins scroll-container">
                 {/* Navbar */}
-                <nav className="fixed top-0 left-0 w-full bg-white z-50 py-4 px-8 flex items-center justify-around h-14">
-                    <div className="w-3/6 flex items-center gap-1">
-                        <h1 className="text-2xl font-semibold">E D U</h1>
+                <nav className="fixed top-0 left-0 w-full bg-white  z-50 py-4 px-8 flex items-center justify-around h-14">
+                    <div className="w-3/6 flex items-center gap-2">
                         <img src="logo/paul.png" alt="" className="h-10 w-12" />
+                        <h1 className="text-2xl font-semibold">E D U X</h1>
                     </div>
                     <div className="w-3/6 flex justify-center">
                         <ul className="flex space-x-12 text-gray-700 font-medium">
@@ -296,64 +295,120 @@ export default function Welcome({ auth }) {
 
                 <section
                     id="home"
-                    className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20 opacity-0 hero-wrapper"
+                    className="relative section min-h-screen h-screen flex flex-col items-center justify-center
+               bg-white text-center px-10 pt-20 overflow-hidden opacity-0 hero-wrapper"
                 >
+                    {/* Blue Gradient Accent Background */}
+                    <div className="absolute top-0 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-blue-300 via-blue-400 to-blue-500 rounded-full blur-3xl opacity-30 z-0 animate-pulse-slow" />
+                    <div className="absolute bottom-0 -right-20 w-[400px] h-[400px] bg-gradient-to-tr from-blue-100 to-blue-300 rounded-full blur-3xl opacity-40 z-0" />
+
+                    {/* Main Content */}
                     <h1
                         id="hero-title"
-                        className="text-6xl font-semibold hero-title text-gray-800 opacity-0"
+                        className="relative z-10 text-7xl font-semibold text-gray-800 mt-4 hero-title flex flex-wrap justify-center"
                     >
-                        Enhancing Education with Our Interactive Learning System
+                        {`Enhancing Education with Our Interactive Learning System`
+                            .split(" ")
+                            .map((word, index) => (
+                                <span
+                                    key={index}
+                                    className="inline-block opacity-0 mr-2 word"
+                                >
+                                    {word}
+                                </span>
+                            ))}
                     </h1>
-                    <p className="title-description text-xl text-gray-600 max-w-2xl mt-3 opacity-0">
+
+                    <p className="relative z-10 title-description text-xl text-gray-600 font-medium max-w-2xl mt-3 opacity-0">
                         Easily access and manage learning materials in one
                         place.
                     </p>
 
-                    <div className="w-full flex items-center justify-center mt-10">
+                    <div className="relative z-10 w-full flex items-center justify-center mt-10">
                         <img
                             src="/images/Untitled.jpg"
                             alt="Learning System"
-                            className="w-[50%] max-w-[1100px] h-auto object-contain hero-image opacity-0"
+                            className="w-[50%] max-w-[1100px] h-[auto] object-contain hero-image opacity-0"
                         />
                     </div>
                 </section>
 
                 <section
                     id="features"
-                    className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20"
+                    className="relative section feature-card min-h-screen flex flex-col items-center justify-center bg-white text-center px-6 pt-20 overflow-hidden -mt-20"
                 >
-                    <p className="text-xl text-blue-400 tracking-wide feature-description">
+                    {/* Unique Gradient Accents */}
+                    <div className="absolute top-10 right-[-150px] w-[350px] h-[350px] bg-gradient-to-tr from-blue-300 via-blue-400 to-blue-500 rounded-full blur-3xl opacity-30 z-0" />
+                    <div className="absolute bottom-[-100px] left-[-100px] w-[250px] h-[250px] bg-gradient-to-br from-blue-100 to-blue-300 rounded-full blur-2xl opacity-40 z-0" />
+
+                    {/* Title */}
+                    <p className="feature-title relative z-10 text-xl text-blue-500 tracking-widest uppercase mb-2 feature-description">
                         Features
                     </p>
-                    <h2 className="text-4xl font-semibold text-gray-800 tracking-wide description-title">
-                        Discover tools that simplify, Enhance, and transform
-                        your learning experience.
-                    </h2>
+                    <h1
+                        id="hero-title"
+                        className="relative z-10 text-5xl font-semibold text-gray-800 mt-4 hero-title flex flex-wrap justify-center"
+                    >
+                        {`Discover tools that simplify, enhance, and transform your learning experience.`
+                            .split(" ")
+                            .map((word, index) => (
+                                <span
+                                    key={index}
+                                    className="inline-block mr-2 feature-word"
+                                >
+                                    {word}
+                                </span>
+                            ))}
+                    </h1>
 
-                    <div className="h-[80vh] w-11/12 flex gap-6 mt-6">
-                        <div className="w-2/3 flex items-center justify-center rounded-2xl shadow-lg overflow-hidden">
+                    {/* Features Grid */}
+                    <div className="relative z-10 mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+                        {/* Feature Card 1 */}
+                        <div className="feature-card-left bg-white shadow-lg rounded-2xl overflow-hidden transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl p-6 flex flex-col items-center text-center">
                             <img
                                 src="/images/video.png"
                                 alt="Learning System"
-                                className="w-full h-full object-contain left-img"
+                                className="w-28 h-28 object-contain mb-4"
                             />
+                            <h3 className="text-xl font-semibold text-gray-700">
+                                Interactive Videos
+                            </h3>
+                            <p className="text-gray-500 mt-2">
+                                Learn through engaging and easy-to-follow video
+                                content tailored for you.
+                            </p>
                         </div>
 
-                        <div className="w-1/3 flex flex-col gap-6">
-                            <div className="h-1/2 rounded-2xl shadow-lg overflow-hidden flex items-center justify-center">
-                                <img
-                                    src="/images/materials.png"
-                                    alt="Materials"
-                                    className="w-full h-full object-contain right-top-img"
-                                />
-                            </div>
-                            <div className="h-1/2 rounded-2xl shadow-lg overflow-hidden flex items-center justify-center">
-                                <img
-                                    src="/images/assignment.png"
-                                    alt="Assignment"
-                                    className="w-full h-full object-contain right-bottom-img"
-                                />
-                            </div>
+                        {/* Feature Card 2 */}
+                        <div className="feature-card-center bg-white shadow-lg rounded-2xl overflow-hidden transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl p-6 flex flex-col items-center text-center">
+                            <img
+                                src="/images/materials.png"
+                                alt="Materials"
+                                className="w-28 h-28 object-contain mb-4"
+                            />
+                            <h3 className="text-xl font-semibold text-gray-700">
+                                Learning Materials
+                            </h3>
+                            <p className="text-gray-500 mt-2">
+                                Access curated materials and resources to
+                                support every topic you study.
+                            </p>
+                        </div>
+
+                        {/* Feature Card 3 */}
+                        <div className="feature-card-right bg-white shadow-lg rounded-2xl overflow-hidden transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl p-6 flex flex-col items-center text-center">
+                            <img
+                                src="/images/assignment.png"
+                                alt="Assignments"
+                                className="w-28 h-28 object-contain mb-4"
+                            />
+                            <h3 className="text-xl font-semibold text-gray-700">
+                                Smart Assignments
+                            </h3>
+                            <p className="text-gray-500 mt-2">
+                                Submit, review, and track assignments with ease
+                                and real-time feedback.
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -362,7 +417,9 @@ export default function Welcome({ auth }) {
                     id="guide"
                     className="section min-h-screen h-screen flex flex-col items-center justify-center bg-white text-center px-10 pt-20"
                 >
-                    <p className="text-xl text-blue-400 tracking-wide">Guide</p>
+                    <p className="text-xl text-blue-400 tracking-widest">
+                        GUIDE
+                    </p>
                     <div className="relative h-[80vh] w-3/4 flex flex-col justify-center items-center">
                         {/* Vertical line */}
                         <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-blue-400"></div>
@@ -474,7 +531,7 @@ export default function Welcome({ auth }) {
                     </div>
 
                     {/* Grid Layout for Developers */}
-                    <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 img">
+                    <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                         {[
                             {
                                 name: "John Paul Sales",
