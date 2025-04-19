@@ -15,6 +15,7 @@ class Submission extends Model
         'assignment_folder',
         'grade',
         'feedback',
+        'status',
     ];
 
     public function assignment()

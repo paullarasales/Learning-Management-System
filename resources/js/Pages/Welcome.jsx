@@ -277,7 +277,13 @@ export default function Welcome({ auth }) {
                     <div className="w-3/6 flex justify-end">
                         {auth && auth.user ? (
                             <Link
-                                href="/dashboard"
+                                href={
+                                    auth.user.role === "admin"
+                                        ? "/admin/dashboard"
+                                        : auth.user.role === "instructor"
+                                        ? "/instructor/dashboard"
+                                        : "/dashboard"
+                                }
                                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                             >
                                 Dashboard

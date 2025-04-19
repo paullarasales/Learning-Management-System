@@ -11,7 +11,7 @@ class Material extends Model
 
     protected $fillable = [
         'class_id',
-        'material_folder',
+        'materials_folder',
         'title',
     ];
 

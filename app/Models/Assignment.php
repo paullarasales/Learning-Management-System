@@ -14,6 +14,7 @@ class Assignment extends Model
         'title',
         'description',
         'due_date',
+        'attachment'
     ];
 
     public function class()

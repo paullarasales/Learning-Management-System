@@ -1,0 +1,19 @@
+Title: Pangasinan State University Career Network for Internships and Professional Development
+
+Context of the Project: The Pangasinan State University Career Network for Interships and Professional Development is a centralized platform designed exclusively for PSU students to explore and apply for internship and job oppurtunities. This platform connects students with verified employers, streamlining the process of finding relevant placements that align with their academic programs and career aspirations. It also allows the university to monitor student applications and track intership placements, ensuring that students gain valuable industry experience. Focused on bridging the gap between academic learning and professional practice, this project reflects PSU's commitment to equipping students for successful careers.
+
+Objectives of the Project: This platform aims to provide PSU students with and efficient and user-friendly system to connect with valuable intership oppurtunities. The main objectives are:
+1. Facilitate Intership Access 
+	- The platform will provide a centralized space for students to browse and apply for interships that align with their academic and career interests.
+2. Simplify Application Tracking
+	- Students will able to track status of their intership application, offering real-time updates on their progress.
+3. Enhance Employer Collaboration
+	- Employers will able to post verified interships oppurtunities, strengthening the connection between the university.
+4. Streamline Internship Placement Monitoring
+	- University administrators can track and oversee student placements, ensuring smooth coordination and support throughout the process.
+
+Scope: The platform will be a centralized, web-based system exclusively for PSU students to explore and apply for internship opportunities. It will feature a student dashboard for browsing internships, tracking application statuses, and receiving notifications. Employers will be verified by administrators, after which they can post internship opportunities directly. Administrators will have access to a backend system where they can verify employers, monitor internship postings, and track student placements. The platform will use secure authentication to limit access to PSU students and authorized personnel. Designed to be mobile-friendly and user-focused, the system aims to streamline the process of connecting students with verified employers while aligning with their academic and career goals.
+
+Delimitation: This project focuses on providing a platform for students to explore and apply for verified internship opportunities aligned with their academic programs. The system will not include features such as resume building, interview preparation guides, video support, or payment tracking for internships. Employers must be verified by administrators before posting opportunities. The platform will allow direct communication between employers and students regarding internship opportunities. Additionally, the platform will initially focus solely on internships, with potential future developments extending to other professional opportunities.
+
+Methodology: Agile methodology is ideal for the Pangasinan State University Career Network for Internships and Professional Development because it allows for flexibility and continuous improvement throughout development.

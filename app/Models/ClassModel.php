@@ -19,7 +19,7 @@ class ClassModel extends Model
 
     public function instructor()
     {
-        return $this->belongsToMany(User::class, 'instructor_id');
+        return $this->belongsTo(User::class, 'instructor_id');
     }
 
     public function students()

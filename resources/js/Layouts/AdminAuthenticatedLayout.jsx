@@ -97,7 +97,7 @@ export default function AdminAuthenticatedLayout({ header, children }) {
                             </Dropdown.Trigger>
 
                             <Dropdown.Content>
-                                <Dropdown.Link href={route("profile.edit")}>
+                                <Dropdown.Link href={route("admin.profile")}>
                                     <div className="flex items-center gap-2">
                                         <Settings className="w-4 h-4" />
                                         Settings

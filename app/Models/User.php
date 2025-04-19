@@ -28,7 +28,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'specialization',
         'bio',
         'profile_picture',
-        'google_id'
+        'google_id',
+        'email_verified_at'
     ];
 
     /**
@@ -62,5 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function enrolledClasses()
     {
         return $this->belongsToMany(ClassModel::class, 'class_student', 'student_id', 'class_id');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }

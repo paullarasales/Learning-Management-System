@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\InstructorController;
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -17,9 +20,16 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
+    Route::get('/classroom', [StudentController::class, 'classroom'])->name('classroom');
+    Route::get('/classroom/{id}', [StudentController::class, 'show'])->name('classes.show');
+    Route::post('/assignment/submit', [StudentController::class, 'submit'])->name('assignment.submit');
+    Route::put('/submissions/{submission}/grade', [SubmissionController::class, 'addGrade']);
+});
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -31,7 +41,22 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/instructor/{user}', [AdminController::class, 'destroy'])->name('instructor.destroy');
     Route::get('/admin/classroom', [AdminController::class, 'classroomView'])->name('classroom.view');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
 });
+
+Route::middleware(['auth', 'instructor'])->group(function () {
+    Route::get('/instructor/dashboard', [InstructorController::class, 'dashboard'])->name('instructor.dashboard');
+    Route::get('/instructor/class', [InstructorController::class, 'classList'])->name('instructor.classList');
+    Route::get('/instructor/create-class', [InstructorController::class, 'create'])->name('instructor.create');
+    Route::post('/instructor/classes', [InstructorController::class, 'store'])->name('instructor.classes.store');
+    Route::get('/instructor/classroom/{id}', [InstructorController::class, 'show'])->name('instructor.classroom.show');
+    Route::post('/instructor/classroom/{id}/add-student', [InstructorController::class, 'addStudent'])->name('instructor.classroom.addStudent');
+    Route::post('/classroom/{classroom}/materials', [MaterialController::class, 'store'])->name('materials.store');
+    Route::post('/classroom/{classroom}/assignments', [InstructorController::class, 'storeAss'])->name('assignments.store');
+});
+
+Route::post('/classroom/{id}/thread', [InstructorController::class, 'storeThread'])->name('thread.store');
+Route::post('/thread/{thread}/reply', [InstructorController::class, 'storeReply'])->name('thread.reply');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -63,6 +63,7 @@ class AdminController extends Controller
 
         $data['role'] = 'instructor';
         $data['password'] = Hash::make($data['password']);
+        $data['email_verified_at'] = now();
 
         User::create($data);
 
@@ -122,5 +123,40 @@ class AdminController extends Controller
         return Inertia::render('Admin/Profile', [
             'user' => $user,
         ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        // dd($request->hasFile('profile_picture'));
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'firstname' => 'required|string|max:255',
+            'middlename' => 'nullable|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'contact_number' => 'required|string|max:20',
+            'password' => 'nullable|string|min:10|confirmed',
+            'profile_picture' => 'nullable|image|max:2048',
+        ]);
+
+        if ($validated['password']) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('profiles'), $filename);
+            $user->profile_picture = 'profiles/' . $filename;
+        }
+
+        $user->firstname = $validated['firstname'];
+        $user->middlename = $validated['middlename'];
+        $user->lastname = $validated['lastname'];
+        $user->contact_number = $validated['contact_number'];
+
+        $user->save();
+
+        return redirect()->route('admin.profile')->with('succes', 'Profile updated successfully.');
     }
 }
