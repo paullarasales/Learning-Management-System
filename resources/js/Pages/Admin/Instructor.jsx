@@ -12,9 +12,9 @@ export default function Instructor({ instructors = [] }) {
         <AdminAuthenticatedLayout>
             <Head title="Instructor" />
 
-            <div className="py-12 max-w-7xl mx-auto px-4">
+            <div className="py-4 max-w-7xl mx-auto px-4">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">List of Instructors</h1>
+                    <h1></h1>
                     <Link
                         href={route("instructor.manage")}
                         className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
@@ -23,7 +23,7 @@ export default function Instructor({ instructors = [] }) {
                     </Link>
                 </div>
 
-                <div className="bg-white shadow overflow-hidden sm:rounded-lg mt-4">
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-100">
                             <tr>
@@ -57,7 +57,9 @@ export default function Instructor({ instructors = [] }) {
                                                 className="h-12 w-12 rounded-full object-cover"
                                             />
                                         ) : (
-                                            <span className="text-gray-400">N/A</span>
+                                            <span className="text-gray-400">
+                                                N/A
+                                            </span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -82,7 +84,9 @@ export default function Instructor({ instructors = [] }) {
                                             Edit
                                         </Link>
                                         <button
-                                            onClick={() => handleDelete(instructor.id)}
+                                            onClick={() =>
+                                                handleDelete(instructor.id)
+                                            }
                                             className="text-red-600 hover:text-red-800"
                                         >
                                             Delete

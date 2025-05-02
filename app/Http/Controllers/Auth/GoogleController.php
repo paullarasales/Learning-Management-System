@@ -51,7 +51,7 @@ class GoogleController extends Controller
 
             }
 
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/student/dashboard');
         } catch (\Exception $e) {
             return redirect('/login')->withErrors(['error' => 'Failed to authenticate']);
         }

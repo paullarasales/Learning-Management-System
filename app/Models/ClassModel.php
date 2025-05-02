@@ -14,6 +14,7 @@ class ClassModel extends Model
     protected $fillable = [
         'name',
         'description',
+        'subcode',
         'instructor_id',
     ];
 

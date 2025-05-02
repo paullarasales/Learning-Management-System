@@ -26,37 +26,46 @@ export default function Dashboard({ classes }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            <h3 className="text-lg font-bold mb-4">
+                            <h3 className="text-lg font-bold mb-6">
                                 Your Classes
                             </h3>
+
+                            {/* Class Cards */}
                             {classes.length > 0 ? (
-                                <ul className="space-y-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {classes.map((cls) => (
-                                        <li
+                                        <div
                                             key={cls.id}
-                                            className="border p-4 rounded shadow-sm bg-gray-50 cursor-pointer hover:bg-gray-100 transition"
+                                            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-200 ease-in-out cursor-pointer"
                                             onClick={() =>
                                                 handleClassClick(cls.id)
                                             }
                                         >
-                                            <h4 className="text-lg font-semibold">
-                                                {cls.name}
-                                            </h4>
-                                            <p className="text-sm text-gray-600">
-                                                {cls.description}
-                                            </p>
-                                            <p className="text-sm mt-2">
-                                                Instructor:{" "}
-                                                <span className="font-medium">
+                                            <div className="p-6">
+                                                <h4 className="text-xl font-semibold text-gray-800 truncate">
+                                                    {cls.name}
+                                                </h4>
+                                                <p className="text-sm text-gray-600 mt-2">
+                                                    {cls.description}
+                                                </p>
+                                                <p className="text-sm mt-4">
+                                                    <span className="font-medium">
+                                                        Instructor:
+                                                    </span>{" "}
                                                     {cls.instructor?.firstname}{" "}
                                                     {cls.instructor?.lastname}
-                                                </span>
-                                            </p>
-                                        </li>
+                                                </p>
+                                                <p className="text-xs text-gray-500 italic mt-1">
+                                                    Subject Code: {cls.subcode}
+                                                </p>
+                                            </div>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             ) : (
-                                <p>You are not enrolled in any classes yet.</p>
+                                <p className="text-gray-600">
+                                    You are not enrolled in any classes yet.
+                                </p>
                             )}
                         </div>
                     </div>

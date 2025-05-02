@@ -7,14 +7,71 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\ClassModel;
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        return Inertia::render('Admin/Dashboard');
+        $instructors = User::where('role', 'instructor')->count();
+        $students = User::where('role', 'student')->count();
+        $classes = ClassModel::count();
+
+        $months = collect();
+        for ($i = 11; $i >= 0; $i--) {
+            $months->push(Carbon::now()->subMonths($i)->format('M Y'));
+        }
+
+        // Fetch the count of users (instructors, students) and classes for each of the last 12 months
+        $instructorsCount = [];
+        $studentsCount = [];
+        $classesCount = [];
+
+        foreach ($months as $month) {
+            // Parse month to get Carbon instance for that month
+            $monthDate = Carbon::createFromFormat('M Y', $month); // Create a Carbon date object
+
+            // Get instructors count for each month (assuming you have a `created_at` column for when they joined)
+            $instructorsCount[] = User::where('role', 'instructor')
+                ->whereMonth('created_at', $monthDate->month)
+                ->whereYear('created_at', $monthDate->year)
+                ->count();
+
+            // Get students count for each month
+            $studentsCount[] = User::where('role', 'student')
+                ->whereMonth('created_at', $monthDate->month)
+                ->whereYear('created_at', $monthDate->year)
+                ->count();
+
+            // Get classes count for each month (assuming you have a `created_at` column for class creation)
+            $classesCount[] = ClassModel::whereMonth('created_at', $monthDate->month)
+                ->whereYear('created_at', $monthDate->year)
+                ->count();
+        }
+
+        $recentInstructors = User::where('role', 'instructor')->take(5)->get();
+        $recentStudents = User::where('role', 'student')->take(5)->get();
+        $recentClasses = ClassModel::take(5)->get();
+
+        return Inertia::render('Admin/Dashboard', [
+            'chartData' => [
+                'months' => $months,
+                'instructors' => $instructorsCount,
+                'students' => $studentsCount,
+                'classes' => $classesCount,
+            ],
+            'totalData' => [
+                'instructors' => $instructors,
+                'students' => $students,
+                'classes' => $classes
+            ],
+            'recentInstructors' => $recentInstructors,
+            'recentStudents' => $recentStudents,
+            'recentClasses' => $recentClasses,
+        ]);
     }
+
 
     public function classroomView()
     {
@@ -23,7 +80,7 @@ class AdminController extends Controller
 
     public function classroom()
     {
-        $classes = ClassModel::withCount('students')->get();
+        $classes = ClassModel::with(['instructor'])->withCount('students')->get();
         return response()->json($classes);
     }
 

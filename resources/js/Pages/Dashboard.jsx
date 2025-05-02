@@ -47,32 +47,32 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <div className="h-3/4 w-full bg-pink-100 flex items-center justify-around gap-4 p-4 rounded-md">
+                    <div className="h-3/4 w-full bg-white grid grid-cols-2 grid-rows-2 gap-6 p-6 rounded-md">
                         {classes.length > 0 ? (
-                            classes.map((cls) => (
+                            classes.slice(0, 4).map((cls) => (
                                 <div
                                     key={cls.id}
-                                    className="bg-white w-1/4 h-[160px] rounded-lg shadow-md p-3 flex flex-col justify-between"
+                                    className="bg-white w-full h-full rounded-lg shadow-md p-6 flex flex-col justify-between"
                                 >
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-800 truncate">
+                                        <h3 className="text-2xl font-bold text-gray-800 truncate">
                                             {cls.name}
                                         </h3>
-                                        <p className="text-sm text-gray-600">
+                                        <p className="text-md text-gray-600 mt-2">
                                             Instructor:{" "}
-                                            <span className="font-medium">
+                                            <span className="font-semibold">
                                                 {cls.instructor?.firstname}{" "}
                                                 {cls.instructor?.lastname}
                                             </span>
                                         </p>
                                     </div>
-                                    <p className="text-xs text-gray-500 italic">
-                                        Subject Code: {cls.code}
+                                    <p className="text-sm text-gray-500 italic mt-4">
+                                        Subject Code: {cls.subcode}
                                     </p>
                                 </div>
                             ))
                         ) : (
-                            <p className="text-white italic">
+                            <p className="text-white italic col-span-2">
                                 You are not enrolled in any classes yet.
                             </p>
                         )}
@@ -92,7 +92,7 @@ export default function Dashboard({
                         <h4 className="text-md font-semibold mb-2">
                             📝 Your Tasks
                         </h4>
-                        <ul className="list-disc list-inside text-md">
+                        <ul className="flex flex-col gap-5 list-disc list-inside text-md">
                             {tasks.length > 0 ? (
                                 tasks.map((task) => (
                                     <li key={task.id}>

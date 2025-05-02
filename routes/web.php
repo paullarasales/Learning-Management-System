@@ -24,7 +24,7 @@ Route::get('/', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
+    Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
     Route::get('/classroom', [StudentController::class, 'classroom'])->name('classroom');
     Route::get('/classroom/{id}', [StudentController::class, 'show'])->name('classes.show');
     Route::post('/assignment/submit', [StudentController::class, 'submit'])->name('assignment.submit');
