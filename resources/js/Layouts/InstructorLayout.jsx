@@ -13,13 +13,13 @@ export default function InstructorLayout({ header, children }) {
     return (
         <div className="min-h-screen bg-red-100 flex">
             <aside
-                className={`bg-white border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
+                className={`bg-navy border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-50`}
             >
                 <div className="flex items-center justify-center mb-6">
                     <Link href="/">
-                        <h1 className="text-4xl font-semibold tracking-widest">
+                        <h1 className="text-4xl font-semibold tracking-widest text-white">
                             E D U X
                         </h1>
                         {/* <ApplicationLogo className="h-10 w-auto text-indigo-600" /> */}
@@ -31,35 +31,35 @@ export default function InstructorLayout({ header, children }) {
                         <X className="w-6 h-6 text-gray-600" />
                     </button>
                 </div>
-                <nav className="flex flex-col gap-2">
-                    <NavLink
+                <nav className="flex flex-col gap-7 items-start p-9">
+                    <Link
                         href={route("instructor.dashboard")}
-                        active={route().current("instructor.dashboard")}
+                        // active={route().current("instructor.dashboard")}
                         className="flex items-center gap-2"
                     >
-                        Dashboard
-                    </NavLink>
-                    <NavLink
+                        <h1 className="text-white text-lg">Dashboard</h1>
+                    </Link>
+                    <Link
                         href={route("instructor.classList")}
-                        active={route().current("instructor.classList")}
+                        // active={route().current("instructor.classList")}
                         className="flex items-center gap-2"
                     >
-                        Class
-                    </NavLink>
-                    <NavLink
+                        <h1 className="text-white text-lg">Class</h1>
+                    </Link>
+                    {/* <NavLink
                         href={route("instructor.create")}
-                        active={route().current("instructor.crease")}
+                        // active={route().current("instructor.crease")}
                         className="flex items-center gap-2"
                     >
                         Manage Classroom
-                    </NavLink>
-                    <NavLink
+                    </NavLink> */}
+                    <Link
                         href={route("admin.profile")}
-                        active={route().current("admin.profile")}
+                        // active={route().current("admin.profile")}
                         className="flex items-center gap-2"
                     >
-                        Profile
-                    </NavLink>
+                        <h1 className="text-white text-lg">Profile</h1>
+                    </Link>
                 </nav>
             </aside>
 

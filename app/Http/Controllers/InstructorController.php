@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Thread;
 use App\Models\Material;
 use App\Models\Reply;
+use App\Models\Task;
 use App\Models\Assignment;
 use App\Models\ClassModel;
 use Inertia\Inertia;
@@ -16,7 +18,31 @@ class InstructorController extends Controller
 {
     public function dashboard()
     {
-        return Inertia::render('Instructor/Dashboard');
+        $instructor = Auth::user();
+
+        if ($instructor->role !==  'instructor') {
+            abort(403, 'Unauthorized');
+        }
+
+        $tasks = Task::where('user_id', $instructor->id)->take(5)->get();
+        $myClasses = ClassModel::where('instructor_id', $instructor->id)->take(5)->get();
+        $myStudent = ClassModel::where('instructor_id', $instructor->id)
+            ->with('students')
+            ->get()
+            ->pluck('students')
+            ->flatten()
+            ->unique('id')
+            ->values();
+
+        // dd($myStudent);
+        // dd($myClasses);
+
+        return Inertia::render('Instructor/Dashboard', [
+                'tasks' => $tasks,
+                'myClasses' => $myClasses,
+                'myStudent' => $myStudent
+            ]
+        );
     }
 
     public function classList()

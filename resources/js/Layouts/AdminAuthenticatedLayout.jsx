@@ -3,9 +3,9 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard, User, LogOut, Settings } from "lucide-react";
 
-export default function AdminAuthenticatedLayout({ header, children }) {
+export default function InstructorLayout({ header, children }) {
     const { auth } = usePage().props;
     const user = auth.user;
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,13 +13,13 @@ export default function AdminAuthenticatedLayout({ header, children }) {
     return (
         <div className="min-h-screen bg-red-100 flex">
             <aside
-                className={`bg-white border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
+                className={`bg-navy border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-50`}
             >
                 <div className="flex items-center justify-center mb-6">
                     <Link href="/">
-                        <h1 className="text-4xl font-semibold tracking-widest">
+                        <h1 className="text-4xl font-semibold tracking-widest text-white">
                             E D U X
                         </h1>
                         {/* <ApplicationLogo className="h-10 w-auto text-indigo-600" /> */}
@@ -27,53 +27,55 @@ export default function AdminAuthenticatedLayout({ header, children }) {
                     <button
                         className="md:hidden"
                         onClick={() => setSidebarOpen(false)}
-                    ></button>
+                    >
+                        <X className="w-6 h-6 text-gray-600" />
+                    </button>
                 </div>
-                <nav className="flex flex-col gap-2">
-                    <NavLink
+                <nav className="flex flex-col gap-7 items-start p-9">
+                    <Link
                         href={route("admin.dashboard")}
-                        active={route().current("admin.dashboard")}
+                        // active={route().current("instructor.dashboard")}
                         className="flex items-center gap-2"
                     >
-                        Dashboard
-                    </NavLink>
-                    <NavLink
+                        <h1 className="text-white text-lg">Dashboard</h1>
+                    </Link> 
+                    <Link
                         href={route("admin.instructor")}
-                        active={route().current("admin.instructor")}
+                        // active={route().current("instructor.classList")}
                         className="flex items-center gap-2"
                     >
-                        Instructors
-                    </NavLink>
-                    <NavLink
+                        <h1 className="text-white text-lg">Instructor</h1>
+                    </Link>
+                    <Link
                         href={route("classroom.view")}
-                        active={route().current("classroom.view")}
+                        // active={route().current("instructor.classList")}
                         className="flex items-center gap-2"
                     >
-                        Classroom
-                    </NavLink>
-                    <NavLink
+                        <h1 className="text-white text-lg">Class</h1>
+                    </Link>
+                    {/* <NavLink
+                        href={route("instructor.create")}
+                        // active={route().current("instructor.crease")}
+                        className="flex items-center gap-2"
+                    >
+                        Manage Classroom
+                    </NavLink> */}
+                    <Link
                         href={route("admin.profile")}
-                        active={route().current("admin.profile")}
+                        // active={route().current("admin.profile")}
                         className="flex items-center gap-2"
                     >
-                        Profile
-                    </NavLink>
+                        <h1 className="text-white text-lg">Profile</h1>
+                    </Link>
                 </nav>
             </aside>
 
             <div className="flex-1 flex flex-col">
-                <div className="flex items-center justify-between bg-gray-100 border-b border-gray-200">
-                    <div className="bg-gray-100 p-4">
-                        {route().current("admin.dashboard") && (
-                            <h1 className="text-xl font-semibold">Dashboard</h1>
+                <div className="flex items-center justify-between bg-gray-100 border-b">
+                    <div className="flex items-center p-4">
+                        {route().current("instructor.dashboard") && (
+                            <h1>Dashboard</h1>
                         )}
-                        {route().current("admin.instructor") && (
-                            <h1 className="text-xl font-semibold">Employees</h1>
-                        )}
-                        {route().current("classroom.view") && (
-                            <h1 className="text-xl font-semibold">Classroom</h1>
-                        )}
-                        {route().current("admin.profile") && <h1>Profile</h1>}
                     </div>
                     <header className="bg-gray-100 h-16 px-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -113,6 +115,7 @@ export default function AdminAuthenticatedLayout({ header, children }) {
                                         href={route("admin.profile")}
                                     >
                                         <div className="flex items-center gap-2">
+                                            <Settings className="w-4 h-4" />
                                             Settings
                                         </div>
                                     </Dropdown.Link>
@@ -122,6 +125,7 @@ export default function AdminAuthenticatedLayout({ header, children }) {
                                         as="button"
                                     >
                                         <div className="flex items-center gap-2">
+                                            <LogOut className="w-4 h-4" />
                                             Logout
                                         </div>
                                     </Dropdown.Link>

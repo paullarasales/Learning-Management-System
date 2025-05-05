@@ -16,6 +16,8 @@ class ClassModel extends Model
         'description',
         'subcode',
         'instructor_id',
+        'photo',
+        'schedule'
     ];
 
     public function instructor()

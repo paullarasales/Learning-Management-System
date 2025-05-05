@@ -12,9 +12,10 @@ export default function NavLink({
             className={
                 "inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out focus:outline-none " +
                 (active
-                    ? "bg-indigo-100 text-indigo-700"
+                    ? "text-red-500"
                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-800") +
-                " " + className
+                " " +
+                className
             }
         >
             {children}

@@ -17,11 +17,13 @@ export default function AuthenticatedLayout({ header, children }) {
                 } sm:flex`}
             >
                 {/* Top Logo */}
-                <div className="h-16 flex items-center gap-2 p-4">
-                    <Link href="/">
-                        <ApplicationLogo className="h-10 w-auto fill-current text-gray-800" />
+                <div className="h-16 flex items-center justify-center gap-2 p-4">
+                    <Link href="/student/dashboard">
+                        <h1 className="text-4xl font-semibold tracking-widest text-black">
+                            E D U X
+                        </h1>
+                        {/* <ApplicationLogo className="h-10 w-auto text-indigo-600" /> */}
                     </Link>
-                    <h1 className="text-2xl font-semibold">E D U X</h1>
                 </div>
 
                 {/* Main nav links */}

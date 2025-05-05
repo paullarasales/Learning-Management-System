@@ -86,7 +86,7 @@ export default function Classroom({ classroom = {}, initialThreads = [] }) {
 
     return (
         <AuthenticatedLayout>
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="px-4 py-6 min-h-screen">
                 {/* Header */}
                 <div className="border-b pb-4 mb-6">
                     <h1 className="text-3xl font-bold text-purple-700">
