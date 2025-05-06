@@ -5,6 +5,8 @@ export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
         name: "",
         description: "",
+        subcode: "",
+        schedule: "",
     });
 
     const handleSubmit = (e) => {
@@ -40,6 +42,34 @@ export default function Create() {
                     {errors.description && (
                         <p className="text-red-500 text-sm">
                             {errors.description}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <label>SubCode</label>
+                    <input
+                        type="text"
+                        value={data.subcode}
+                        onChange={(e) => setData("subcode", e.target.value)}
+                        className="border rounded px-2 py-1 w-full"
+                    />
+                    {errors.name && (
+                        <p className="text-red-500 text-sm">{errors.subcode}</p>
+                    )}
+                </div>
+
+                <div>
+                    <label>SubCode</label>
+                    <input
+                        type="text"
+                        value={data.schedule}
+                        onChange={(e) => setData("schedule", e.target.value)}
+                        className="border rounded px-2 py-1 w-full"
+                    />
+                    {errors.name && (
+                        <p className="text-red-500 text-sm">
+                            {errors.schedule}
                         </p>
                     )}
                 </div>

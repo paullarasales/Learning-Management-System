@@ -68,6 +68,8 @@ class InstructorController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
+            'subcode' => 'required|string|max:255',
+            'schedule' => 'required|string|max:255'
         ]);
 
         $data['instructor_id'] = auth()->id();
