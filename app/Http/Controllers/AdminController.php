@@ -89,7 +89,12 @@ class AdminController extends Controller
             'subcode' => 'required|string|max:255',
             'schedule' => 'required|string|max:255',
             'instructor_id' => 'required|exists:users,id',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+
+        }
 
         ClassModel::create($data);
 
