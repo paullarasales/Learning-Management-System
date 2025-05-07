@@ -38,7 +38,7 @@ export default function InstructorLayout({ header, children }) {
                         className="flex items-center gap-2"
                     >
                         <h1 className="text-white text-lg">Dashboard</h1>
-                    </Link> 
+                    </Link>
                     <Link
                         href={route("admin.instructor")}
                         // active={route().current("instructor.classList")}
@@ -53,13 +53,13 @@ export default function InstructorLayout({ header, children }) {
                     >
                         <h1 className="text-white text-lg">Class</h1>
                     </Link>
-                    {/* <NavLink
-                        href={route("instructor.create")}
-                        // active={route().current("instructor.crease")}
+                    <Link
+                        href={route("classroom.create")}
+                        // active={route().current("instructor.classList")}
                         className="flex items-center gap-2"
                     >
-                        Manage Classroom
-                    </NavLink> */}
+                        <h1 className="text-white text-lg">Manage</h1>
+                    </Link>
                     <Link
                         href={route("admin.profile")}
                         // active={route().current("admin.profile")}
@@ -73,9 +73,17 @@ export default function InstructorLayout({ header, children }) {
             <div className="flex-1 flex flex-col">
                 <div className="flex items-center justify-between bg-gray-100 border-b">
                     <div className="flex items-center p-4">
-                        {route().current("instructor.dashboard") && (
+                        {route().current("admin.dashboard") && (
                             <h1>Dashboard</h1>
                         )}
+                        {route().current("admin.instructor") && (
+                            <h1>Instructors</h1>
+                        )}
+                        {route().current("classroom.view") && <h1>Class</h1>}
+                        {route().current("classroom.create") && (
+                            <h1>Create Class</h1>
+                        )}
+                        {route().current("admin.profile") && <h1>Profile</h1>}
                     </div>
                     <header className="bg-gray-100 h-16 px-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">

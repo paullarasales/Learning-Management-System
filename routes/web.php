@@ -39,6 +39,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/instructor/{user}/edit', [AdminController::class, 'edit'])->name('instructor.edit');
     Route::put('/instructor/{user}', [AdminController::class, 'update'])->name('instructor.update');
     Route::delete('/instructor/{user}', [AdminController::class, 'destroy'])->name('instructor.destroy');
+    Route::get('/classroom', [AdminController::class, 'createClassroom'])->name('classroom.create');
+    Route::post('/classroom', [AdminController::class, 'storeClassroom'])->name('classroom.store');
     Route::get('/admin/classroom', [AdminController::class, 'classroomView'])->name('classroom.view');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');

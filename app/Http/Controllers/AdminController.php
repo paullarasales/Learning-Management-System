@@ -72,6 +72,29 @@ class AdminController extends Controller
         ]);
     }
 
+    public function createClassroom()
+    {
+        $instructors = User::where('role', 'instructor')->get();
+
+        return Inertia::render('Admin/CreateClass', [
+            'instructors' => $instructors,
+        ]);
+    }
+
+    public function storeClassroom(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'subcode' => 'required|string|max:255',
+            'schedule' => 'required|string|max:255',
+            'instructor_id' => 'required|exists:users,id',
+        ]);
+
+        ClassModel::create($data);
+
+        return back();
+    }
 
     public function classroomView()
     {
