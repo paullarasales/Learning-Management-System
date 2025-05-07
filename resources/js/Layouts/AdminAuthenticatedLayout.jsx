@@ -71,21 +71,29 @@ export default function InstructorLayout({ header, children }) {
             </aside>
 
             <div className="flex-1 flex flex-col">
-                <div className="flex items-center justify-between bg-gray-100 border-b">
+                <div className="flex items-center justify-between bg-white border-b">
                     <div className="flex items-center p-4">
                         {route().current("admin.dashboard") && (
-                            <h1>Dashboard</h1>
+                            <h1 className="text-xl font-semibold">Dashboard</h1>
                         )}
                         {route().current("admin.instructor") && (
-                            <h1>Instructors</h1>
+                            <h1 className="text-xl font-semibold">
+                                Instructors
+                            </h1>
                         )}
-                        {route().current("classroom.view") && <h1>Class</h1>}
+                        {route().current("classroom.view") && (
+                            <h1 className="text-xl font-semibold">Class</h1>
+                        )}
                         {route().current("classroom.create") && (
-                            <h1>Create Class</h1>
+                            <h1 className="text-xl font-semibold">
+                                Create Class
+                            </h1>
                         )}
-                        {route().current("admin.profile") && <h1>Profile</h1>}
+                        {route().current("admin.profile") && (
+                            <h1 className="text-xl font-semibold">Profile</h1>
+                        )}
                     </div>
-                    <header className="bg-gray-100 h-16 px-4 flex items-center justify-between">
+                    <header className="bg-white h-16 px-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <button
                                 className="md:hidden"
@@ -143,7 +151,7 @@ export default function InstructorLayout({ header, children }) {
                     </header>
                 </div>
 
-                <main className="flex-1 overflow-y-auto p-4 bg-gray-100">
+                <main className="flex-1 overflow-y-auto p-4 bg-white">
                     {children}
                 </main>
             </div>

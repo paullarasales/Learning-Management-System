@@ -126,7 +126,7 @@ export default function Dashboard({
 
     return (
         <AdminAuthenticatedLayout>
-            <div className="min-h-screen bg-gray-100 p-6">
+            <div className="min-h-screen bg-white p-6">
                 <div className="max-w-7xl mx-auto space-y-8">
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
