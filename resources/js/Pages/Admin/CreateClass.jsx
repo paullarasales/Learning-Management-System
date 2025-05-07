@@ -9,6 +9,7 @@ export default function CreateClass({ instructors }) {
         subcode: "",
         schedule: "",
         instructor_id: "",
+        photo: null,
     });
 
     const handleSubmit = (e) => {
@@ -21,8 +22,17 @@ export default function CreateClass({ instructors }) {
         <AdminAuthenticatedLayout>
             <form
                 onSubmit={handleSubmit}
+                encType="multipart/form-data"
                 className="space-y-4 max-w-md mx-auto"
             >
+                <input
+                    type="file"
+                    value={data.photo}
+                    className="w-full border rounded p-2"
+                />
+                {errors.photo && (
+                    <div className="text-red-500 text-sm">{errors.photo}</div>
+                )}
                 <input
                     type="text"
                     value={data.name}

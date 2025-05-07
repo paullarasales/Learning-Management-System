@@ -93,7 +93,10 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-
+            $file = $request->file('photo');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->move(public_path('class'), $filename);
+            $data['photo'] = $filename;
         }
 
         ClassModel::create($data);
