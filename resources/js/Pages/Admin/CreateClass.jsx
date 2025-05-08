@@ -1,9 +1,11 @@
 import AdminAuthenticatedLayout from "@/Layouts/AdminAuthenticatedLayout";
+import InputLabel from "@/Components/InputLabel";
+import InputError from "@/Components/InputError";
 import { useForm } from "@inertiajs/react";
 import React from "react";
 
 export default function CreateClass({ instructors }) {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         description: "",
         subcode: "",
@@ -25,14 +27,16 @@ export default function CreateClass({ instructors }) {
                 encType="multipart/form-data"
                 className="space-y-4 max-w-md mx-auto"
             >
-                <input
-                    type="file"
-                    value={data.photo}
-                    className="w-full border rounded p-2"
-                />
-                {errors.photo && (
-                    <div className="text-red-500 text-sm">{errors.photo}</div>
-                )}
+                <div className="col-span-1 md:col-span-2">
+                    <InputLabel htmlFor="photo" value="Class Photo" />
+                    <input
+                        id="photo"
+                        type="file"
+                        className="mt-1 block w-full"
+                        onChange={(e) => setData("photo", e.target.files[0])}
+                    />
+                    <InputError message={errors.photo} className="mt-2" />
+                </div>
                 <input
                     type="text"
                     value={data.name}

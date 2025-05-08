@@ -83,13 +83,14 @@ class AdminController extends Controller
 
     public function storeClassroom(Request $request)
     {
+        // dd($request->all());
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'subcode' => 'required|string|max:255',
             'schedule' => 'required|string|max:255',
             'instructor_id' => 'required|exists:users,id',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
         ]);
 
         if ($request->hasFile('photo')) {
