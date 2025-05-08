@@ -85,9 +85,7 @@ export default function InstructorLayout({ header, children }) {
                             <h1 className="text-xl font-semibold">Class</h1>
                         )}
                         {route().current("classroom.create") && (
-                            <h1 className="text-xl font-semibold">
-                                Create Class
-                            </h1>
+                            <h1 className="text-xl font-semibold">Class</h1>
                         )}
                         {route().current("admin.profile") && (
                             <h1 className="text-xl font-semibold">Profile</h1>

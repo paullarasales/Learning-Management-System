@@ -88,9 +88,11 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'subcode' => 'required|string|max:255',
-            'schedule' => 'required|string|max:255',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'instructor_id' => 'required|exists:users,id',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'yearlevel' => 'required|int'
         ]);
 
         if ($request->hasFile('photo')) {

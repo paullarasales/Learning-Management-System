@@ -18,6 +18,9 @@ export default {
             colors: {
                 navy: "#000080",
             },
+            height: {
+                form: "680px",
+            },
         },
     },
 
