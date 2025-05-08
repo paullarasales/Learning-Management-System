@@ -18,7 +18,10 @@ class ClassModel extends Model
         'instructor_id',
         'photo',
         'schedule',
-        'yearlevel'
+        'yearlevel',
+        'section',
+        'start_time',
+        'end_time',
     ];
 
     public function instructor()

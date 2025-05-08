@@ -92,8 +92,10 @@ class AdminController extends Controller
             'end_time' => 'required|date_format:H:i|after:start_time',
             'instructor_id' => 'required|exists:users,id',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-            'yearlevel' => 'required|int'
+            'yearlevel' => 'required|int',
+            'section' => 'required|string|max:20'
         ]);
+
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');

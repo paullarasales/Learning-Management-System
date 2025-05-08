@@ -14,6 +14,7 @@ export default function CreateClass({ instructors }) {
         instructor_id: "",
         photo: null,
         yearlevel: "",
+        section: "",
     });
 
     const handleSubmit = (e) => {
@@ -38,7 +39,7 @@ export default function CreateClass({ instructors }) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-blue-600 text-white px-4 rounded-md h-14 w-64"
+                            className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
                         >
                             Save
                         </button>
@@ -132,6 +133,16 @@ export default function CreateClass({ instructors }) {
                                 value={data.yearlevel}
                                 onChange={(e) =>
                                     setData("yearlevel", e.target.value)
+                                }
+                                className="w-full border rounded p-2"
+                            />
+
+                            <input
+                                type="text"
+                                placeholder="Section"
+                                value={data.section}
+                                onChange={(e) =>
+                                    setData("section", e.target.value)
                                 }
                                 className="w-full border rounded p-2"
                             />

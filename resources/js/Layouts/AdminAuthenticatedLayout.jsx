@@ -13,7 +13,7 @@ export default function InstructorLayout({ header, children }) {
     return (
         <div className="min-h-screen bg-red-100 flex">
             <aside
-                className={`bg-navy border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
+                className={`bg-black border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-50`}
             >
@@ -71,7 +71,7 @@ export default function InstructorLayout({ header, children }) {
             </aside>
 
             <div className="flex-1 flex flex-col">
-                <div className="flex items-center justify-between bg-white border-b">
+                <div className="flex items-center justify-between bg-white">
                     <div className="flex items-center p-4">
                         {route().current("admin.dashboard") && (
                             <h1 className="text-xl font-semibold">Dashboard</h1>
