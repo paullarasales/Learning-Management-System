@@ -113,7 +113,7 @@ export default function Classroom({
             forceFormData: true,
             onSuccess: () => {
                 console.log("Uploaded successfully!");
-                resetMaterial();
+                materialReset();
                 window.location.reload();
             },
             onError: (errors) => {
@@ -730,8 +730,6 @@ export default function Classroom({
                             </ul>
                         </div>
                     )}
-
-                    {/* Add more tabs here */}
                 </div>
             </div>
         </InstructorLayout>

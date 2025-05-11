@@ -20,6 +20,11 @@ export default {
             },
             height: {
                 form: "680px",
+                class: "800px",
+                container: "380px",
+            },
+            width: {
+                container: "300px",
             },
         },
     },

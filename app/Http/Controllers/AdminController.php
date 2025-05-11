@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\ClassModel;
+use App\Models\Thread;
+use App\Models\Material;
+use App\Models\Assignment;
 use Carbon\Carbon;
 use Inertia\Inertia;
 
@@ -52,7 +55,7 @@ class AdminController extends Controller
 
         $recentInstructors = User::where('role', 'instructor')->take(5)->get();
         $recentStudents = User::where('role', 'student')->take(5)->get();
-        $recentClasses = ClassModel::take(5)->get();
+        $recentClasses = ClassModel::latest()->take(5)->get();
 
         return Inertia::render('Admin/Dashboard', [
             'chartData' => [
@@ -251,5 +254,30 @@ class AdminController extends Controller
         $user->save();
 
         return redirect()->route('admin.profile')->with('succes', 'Profile updated successfully.');
+    }
+
+    public function showClassroom($id)
+    {
+        $classroom = ClassModel::with(['instructor', 'students'])->findOrFail($id);
+        // dd($classroom);
+        $students = User::where('role', 'student')->get();
+        $threads = Thread::with(['user', 'replies.user'])
+            ->where('class_id', $id)
+            ->latest()
+            ->get();
+        $materials = Material::where('class_id', $id)->latest()->get();
+        $assignments = Assignment::with([
+            'submissions.student'
+        ])->where('class_id', $id)
+          ->latest()
+          ->get();
+
+        return Inertia::render('Admin/ClassroomView', [
+            'classroom' => $classroom,
+            'students' => $students,
+            'threads' => $threads,
+            'materials' => $materials,
+            'assignments' => $assignments,
+        ]);
     }
 }
