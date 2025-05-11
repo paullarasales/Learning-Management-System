@@ -91,6 +91,16 @@ export default function ClassroomView({
         });
     };
 
+    const handleCreateReply = (threadId, e) => {
+        e.preventDefault();
+        postReply(route("thread.reply", threadId), {
+            onSuccess: () => {
+                resetReply();
+                setThreads([...props.initialThreads]);
+            },
+        });
+    };
+
     const handleReplyClick = (threadId) => {
         setReplyData({ ...replyData, thread_id: threadId, message: "" });
     };
@@ -143,6 +153,14 @@ export default function ClassroomView({
     return (
         <AdminAuthenticatedLayout>
             <div className="space-y-4">
+                <div className="border-b pb-4 mb-4">
+                    <h1 className="text-3xl font-semibold text-purple-700">
+                        {classroom?.name || "Classroom"}
+                    </h1>
+                    <p className="text-gray-600">
+                        {classroom?.description || ""}
+                    </p>
+                </div>
                 <div className="flex space-x-4 border-b mb-4">
                     {["threads", "materials", "assignments", "members"].map(
                         (tab) => (
@@ -170,10 +188,7 @@ export default function ClassroomView({
                                 <textarea
                                     value={threadData.message}
                                     onChange={(e) =>
-                                        setThreadData(
-                                            "messsage",
-                                            e.target.value
-                                        )
+                                        setThreadData("message", e.target.value)
                                     }
                                     placeholder="Start a new discussion..."
                                     className="w-full border p-3 rounded-md"
@@ -189,117 +204,122 @@ export default function ClassroomView({
                                 </button>
                             </form>
 
-                            <div>
+                            <div className="space-y-4">
                                 {threads?.map((thread) => (
                                     <div
                                         key={thread.id}
                                         className="border p-4 rounded-lg bg-white shadow-sm"
                                     >
-                                        <div className="flex items-center mb-2">
-                                            <span className="flex items-center mb-2">
+                                        {/* Thread Header */}
+                                        <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
+                                            <span className="font-semibold text-black">
                                                 {thread?.user?.firstname ||
                                                     "Anonymous"}
                                             </span>
-                                            <span className="text-gray-400 text-sm ml-2">
+                                            <span>
                                                 {new Date(
                                                     thread.created_at
                                                 ).toLocaleDateString()}
                                             </span>
-                                            <p className="mb-4">
-                                                {thread.message || ""}
-                                            </p>
+                                        </div>
 
-                                            {replyData.thread_id ===
-                                                thread.id && (
-                                                <form
-                                                    onSubmit={(e) =>
-                                                        handleCreateReply(
-                                                            thread.id
+                                        {/* Thread Message */}
+                                        <p className="text-gray-800 mb-4">
+                                            {thread.message || ""}
+                                        </p>
+
+                                        {/* Reply Form (if open) */}
+                                        {replyData.thread_id === thread.id && (
+                                            <form
+                                                onSubmit={(e) =>
+                                                    handleCreateReply(
+                                                        thread.id,
+                                                        e
+                                                    )
+                                                }
+                                                className="ml-6 mt-4"
+                                            >
+                                                <textarea
+                                                    value={replyData.message}
+                                                    onChange={(e) =>
+                                                        setReplyData(
+                                                            "message",
+                                                            e.target.value
                                                         )
                                                     }
-                                                    className="ml-6 mt-4"
-                                                >
-                                                    <textarea
-                                                        value={
-                                                            replyData.message
+                                                    placeholder="Write your reply..."
+                                                    className="w-full border p-2 rounded resize-none"
+                                                    rows="2"
+                                                    required
+                                                />
+                                                <div className="flex space-x-2 mt-2">
+                                                    <button
+                                                        type="submit"
+                                                        className="bg-purple-600 text-white px-4 py-1 rounded"
+                                                        disabled={
+                                                            replyProcessing
                                                         }
-                                                        onChange={(e) =>
-                                                            setReplyData(
-                                                                "message",
-                                                                e.target.value
-                                                            )
+                                                    >
+                                                        Post Reply
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            resetReply()
                                                         }
-                                                        placeholder="Write your reply..."
-                                                        className="w-full border p-2 rounded"
-                                                        rows="2"
-                                                        required
-                                                    />
-                                                    <div className="flex space-x-2 mt-2">
-                                                        <button
-                                                            type="submit"
-                                                            className="bg-purple-600 text-white px-3 rounded"
-                                                            disabled={
-                                                                replyProcessing
-                                                            }
-                                                        >
-                                                            Post Reply
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                resetReply()
-                                                            }
-                                                            className="bg-gray-200 px-3 py-1 rounded"
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            )}
-                                            <button
-                                                onClick={() =>
-                                                    handleReplyClick(thread.id)
-                                                }
-                                                className="text-sm text-purple-600 mt-2"
-                                            >
-                                                Reply
-                                            </button>
-                                            {thread.replies?.length > 0 && (
-                                                <div className="mt-4 ml-6 space-y-4">
-                                                    {thread.replies.map(
-                                                        (reply) => (
-                                                            <div
-                                                                key={reply.id}
-                                                                className="border-l-2 pl-4 py-2"
-                                                            >
-                                                                <div className="flex items-center mb-1">
-                                                                    <span className="font-semibold">
-                                                                        {reply
-                                                                            ?.user
-                                                                            ?.firstname ||
-                                                                            "Anonymous"}
-                                                                    </span>
-                                                                    <span className="text-gray-400 text-sm ml-2">
-                                                                        {new Date(
-                                                                            reply.created_at
-                                                                        ).toLocaleTimeString()}
-                                                                    </span>
-                                                                </div>
-                                                                <p>
-                                                                    {reply?.message ||
-                                                                        ""}
-                                                                </p>
-                                                            </div>
-                                                        )
-                                                    )}
+                                                        className="bg-gray-200 text-gray-800 px-4 py-1 rounded"
+                                                    >
+                                                        Cancel
+                                                    </button>
                                                 </div>
-                                            )}
-                                        </div>
+                                            </form>
+                                        )}
+
+                                        {/* Reply Button */}
+                                        <button
+                                            onClick={() =>
+                                                handleReplyClick(thread.id)
+                                            }
+                                            className="text-sm text-purple-600 mt-3 ml-1"
+                                        >
+                                            Reply
+                                        </button>
+
+                                        {/* Replies */}
+                                        {thread.replies?.length > 0 && (
+                                            <div className="mt-4 ml-6 space-y-4">
+                                                {thread.replies.map((reply) => (
+                                                    <div
+                                                        key={reply.id}
+                                                        className="border-l-4 border-purple-200 bg-gray-50 p-3 rounded"
+                                                    >
+                                                        <div className="flex justify-between items-center text-sm text-gray-500 mb-1">
+                                                            <span className="font-semibold text-black">
+                                                                {reply?.user
+                                                                    ?.firstname ||
+                                                                    "Anonymous"}
+                                                            </span>
+                                                            <span>
+                                                                {new Date(
+                                                                    reply.created_at
+                                                                ).toLocaleTimeString()}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-gray-700">
+                                                            {reply?.message ||
+                                                                ""}
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
+
+                                {/* Empty State */}
                                 {threads?.length === 0 && (
                                     <p className="text-gray-500">
-                                        No discussions threads yet. Start one
+                                        No discussion threads yet. Start one
                                         above!
                                     </p>
                                 )}

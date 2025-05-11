@@ -25,7 +25,7 @@ Route::get('/', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 Route::middleware(['auth'])->group(function () {
     Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
-    Route::get('/classroom', [StudentController::class, 'classroom'])->name('classroom');
+    Route::get('/student/classroom', [StudentController::class, 'classroom'])->name('classroom');
     Route::get('/classroom/{id}', [StudentController::class, 'show'])->name('classes.show');
     Route::post('/assignment/submit', [StudentController::class, 'submit'])->name('assignment.submit');
     Route::put('/submissions/{submission}/grade', [SubmissionController::class, 'addGrade']);

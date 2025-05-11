@@ -265,6 +265,8 @@ class AdminController extends Controller
             ->where('class_id', $id)
             ->latest()
             ->get();
+
+        // dd($threads);
         $materials = Material::where('class_id', $id)->latest()->get();
         $assignments = Assignment::with([
             'submissions.student'
@@ -275,7 +277,7 @@ class AdminController extends Controller
         return Inertia::render('Admin/ClassroomView', [
             'classroom' => $classroom,
             'students' => $students,
-            'threads' => $threads,
+            'initialThreads' => $threads,
             'materials' => $materials,
             'assignments' => $assignments,
         ]);
