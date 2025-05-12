@@ -1,6 +1,7 @@
 import { useForm, usePage, router } from "@inertiajs/react";
 import AdminAuthenticatedLayout from "@/Layouts/AdminAuthenticatedLayout";
 import { useState, useEffect } from "react";
+import { Dice1 } from "lucide-react";
 
 export default function ClassroomView({
     classroom = { students: [] },
@@ -324,6 +325,121 @@ export default function ClassroomView({
                                     </p>
                                 )}
                             </div>
+                        </div>
+                    )}
+                    {activeTab === "materials" && (
+                        <div>
+                            <form
+                                onSubmit={handleAddMaterial}
+                                encType="multipart/form-data"
+                                className="mb-6 space-y-4"
+                            >
+                                <div>
+                                    <label className="block font-semibold mb-1">
+                                        Material Title
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={materialData.title}
+                                        onChange={(e) =>
+                                            setMaterialData(
+                                                "title",
+                                                e.target.value
+                                            )
+                                        }
+                                        placeholder="Title"
+                                        className="w-1/3 border p-3 rounded"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block font-semibold mb-1">
+                                        Upload Material
+                                    </label>
+                                    <input
+                                        type="file"
+                                        onChange={(e) =>
+                                            setMaterialData(
+                                                "materials_folder",
+                                                e.target.files[0]
+                                            )
+                                        }
+                                        className="w-1/3 border p-3 rounded"
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+                                >
+                                    {materialProcessing
+                                        ? "Uploading..."
+                                        : "Upload"}
+                                </button>
+                            </form>
+                            <div className="space-y-4">
+                                <h2 className="text-xl font-semibold">
+                                    Uploaded Materials
+                                </h2>
+                                {materials.length === 0 ? (
+                                    <p>No Materials uploaded yet.</p>
+                                ) : (
+                                    <ul className="space-y-2">
+                                        {materials.map((material) => (
+                                            <li
+                                                key={material.id}
+                                                className="border p-4 rounded shadow-sm bg-white"
+                                            >
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <h3 className="font-medium">
+                                                            {material.title}
+                                                        </h3>
+                                                        <a
+                                                            href={`/materials/${material.materials_folder}`}
+                                                            target="_blank"
+                                                        >
+                                                            View/Download
+                                                        </a>
+                                                    </div>
+                                                    <span className="text-sm text-gray-400">
+                                                        {new Date(
+                                                            material.created_at
+                                                        ).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === "assignments" && (
+                        <div>
+                            <form
+                                onSubmit={handleCreateAssignment}
+                                encType="multipart/form-data"
+                                className="mb-6 space-y-4"
+                            >
+                                <div>
+                                    <label className="block font-semibold mb-1">
+                                        Assignment Title
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={assignmentData.title}
+                                        onChange={(e) =>
+                                            setAssignmentData(
+                                                "title",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full border p-3 rounded"
+                                        required
+                                    />
+                                </div>
+                            </form>
                         </div>
                     )}
                 </div>
