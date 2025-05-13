@@ -54,6 +54,9 @@ Route::middleware(['auth', 'instructor'])->group(function () {
     Route::post('/instructor/classes', [InstructorController::class, 'store'])->name('instructor.classes.store');
     Route::get('/instructor/classroom/{id}', [InstructorController::class, 'show'])->name('instructor.classroom.show');
     Route::post('/instructor/classroom/{id}/add-student', [InstructorController::class, 'addStudent'])->name('instructor.classroom.addStudent');
+});
+
+Route::middleware(['auth', 'admin', 'instructor'])->group(function () {
     Route::post('/classroom/{classroom}/materials', [MaterialController::class, 'store'])->name('materials.store');
     Route::post('/classroom/{classroom}/assignments', [InstructorController::class, 'storeAss'])->name('assignments.store');
 });

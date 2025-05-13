@@ -439,8 +439,239 @@ export default function ClassroomView({
                                         required
                                     />
                                 </div>
+                                <div>
+                                    <label className="block font-semibold">
+                                        Upload Assignment File
+                                    </label>
+                                    <input
+                                        type="file"
+                                        onChange={(e) =>
+                                            setAssignmentData(
+                                                "file",
+                                                e.target.files[0]
+                                            )
+                                        }
+                                        className="w-full border p-3 rounded"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block font-semibold mb-1">
+                                        Due Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={assignmentData.due_date}
+                                        onChange={(e) =>
+                                            setAssignmentData(
+                                                "due_date",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full border p-3 rounded"
+                                        required
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="mt-4 bg-purple-600 text-white px-4 py-2 rounded"
+                                >
+                                    {assignmentProcessing
+                                        ? "Uploading"
+                                        : "Upload Assignment"}
+                                </button>
                             </form>
+
+                            {props.assignments?.length > 0 && (
+                                <div className="space-y-4">
+                                    <h2 className="text-xl font-semibold">
+                                        Uploaded Assignments
+                                    </h2>
+                                    <ul className="space-y-2">
+                                        {props.assignments.map((assignment) => (
+                                            <li
+                                                key={assignment.id}
+                                                className="border p-4 rounded shadow-sm bg-white cursor pointer"
+                                                onClick={() =>
+                                                    setSelectedAssignment(
+                                                        assignment
+                                                    )
+                                                }
+                                            >
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <h3 className="font-medium">
+                                                            {assignment.title}
+                                                        </h3>
+                                                        <p className="text-sm text-gray-400">
+                                                            Click to view
+                                                            details
+                                                        </p>
+                                                    </div>
+                                                    <span className="text-sm text-gray-400">
+                                                        {new Date(
+                                                            assignment.created_at
+                                                        ).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {selectedAssignment && (
+                                <div
+                                    id="assignment-details"
+                                    className="mt-8 border-t pt-4 space-y-4"
+                                >
+                                    <h2>Assignment Details</h2>
+                                    <p>
+                                        <strong>Title:</strong>
+                                        {selectedAssignment.title}
+                                    </p>
+                                    <p>
+                                        <strong>Due Date:</strong>
+                                        {new Date(
+                                            selectedAssignment.due_date
+                                        ).toLocaleDateString()}
+                                    </p>
+
+                                    {selectedAssignment.submissions.map(
+                                        (submission) => (
+                                            <li
+                                                key={submission.id}
+                                                className="border rounded p-4 bg-white shadow-sm"
+                                            >
+                                                <div className="flex justify-between items-apart gap-4 flex-wrap">
+                                                    <div className="flex-1">
+                                                        <p className="font-medium">
+                                                            {
+                                                                submission
+                                                                    .student
+                                                                    ?.name
+                                                            }
+                                                        </p>
+                                                        <p className="text-sm text-gray-600">
+                                                            Submission ID:{""}
+                                                            {submission.id}
+                                                        </p>
+                                                        <p className="text-sm text-gray-600">
+                                                            Grade:{" "}
+                                                            <input
+                                                                type="text"
+                                                                defaultValue={
+                                                                    submission.grade ||
+                                                                    ""
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setGradingData(
+                                                                        (
+                                                                            prev
+                                                                        ) => ({
+                                                                            ...prev,
+                                                                            [submission.id]:
+                                                                                {
+                                                                                    ...prev[
+                                                                                        submission
+                                                                                            .id
+                                                                                    ],
+                                                                                    grade: e
+                                                                                        .target
+                                                                                        .value,
+                                                                                },
+                                                                        })
+                                                                    )
+                                                                }
+                                                                className="border p-1 w-24 rounded"
+                                                            />
+                                                        </p>
+                                                        <p className="text-sm text-gray-600 mt-2">
+                                                            Feedback:
+                                                            <textarea
+                                                                defaultValue={
+                                                                    submission.feedback ||
+                                                                    ""
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setGradingData(
+                                                                        (
+                                                                            prev
+                                                                        ) => ({
+                                                                            ...prev,
+                                                                            [submission.id]:
+                                                                                {
+                                                                                    ...prev[
+                                                                                        submission
+                                                                                            .id
+                                                                                    ],
+                                                                                    feedback:
+                                                                                        e
+                                                                                            .target
+                                                                                            .value,
+                                                                                },
+                                                                        })
+                                                                    )
+                                                                }
+                                                                className="border w-full p-1 rounded mt-1"
+                                                                rows={2}
+                                                            />
+                                                        </p>
+                                                        <button
+                                                            onClick={() =>
+                                                                updateGrade(
+                                                                    submission.id
+                                                                )
+                                                            }
+                                                            className="mt-2 px-3 py-1 bg-purple text-white rounded text-sm"
+                                                        >
+                                                            Save Grade
+                                                        </button>
+                                                    </div>
+                                                    <div>
+                                                        <a
+                                                            href={`/submissions/${submission.assignment_folder}`}
+                                                            target="_blank"
+                                                            className="text-purple-600 underline"
+                                                        >
+                                                            View Submission
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        )
+                                    )}
+                                </div>
+                            )}
                         </div>
+                    )}
+                    {activeTab === "members" && (
+                        <>
+                            <h2 className="text-xl font-semibold">
+                                Class Members
+                            </h2>
+
+                            <form
+                                onSubmit={handleAddStudent}
+                                className="flex space-x-4 mb-6"
+                            >
+                                <select
+                                    value={studentData.student_id}
+                                    onChange={(e) =>
+                                        setStudentData(
+                                            "student_id",
+                                            e.target.value
+                                        )
+                                    }
+                                    className="border px-3 py-2 rounded w-1/2"
+                                    required
+                                >
+                                    <option value="">
+                                        Select a student to add
+                                    </option>
+                                </select>
+                            </form>
+                        </>
                     )}
                 </div>
             </div>

@@ -17,7 +17,7 @@ class isInstructor
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && Auth::user()->role !== 'instructor') {
-            return redirect()->intended('dashboard');
+            return redirect()->intended('student.dashboard');
         }
         return $next($request);
     }
