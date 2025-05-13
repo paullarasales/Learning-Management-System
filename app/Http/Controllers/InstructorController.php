@@ -150,7 +150,7 @@ class InstructorController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,docx,txt|max:10240', // You can adjust the allowed file types if necessary
+            'file' => 'required|file|mimes:pdf,docx,txt,ppt,pptx|max:10240', // You can adjust the allowed file types if necessary
             'classroom_id' => 'required|exists:classes,id', // Ensuring the class ID exists
             'due_date' => 'required|date', // Validate due date
         ]);

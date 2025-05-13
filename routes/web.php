@@ -20,11 +20,8 @@ Route::get('/', function () {
     ]);
 });
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 Route::middleware(['auth'])->group(function () {
-    Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
+    Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
     Route::get('/student/classroom', [StudentController::class, 'classroom'])->name('classroom');
     Route::get('/classroom/{id}', [StudentController::class, 'show'])->name('classes.show');
     Route::post('/assignment/submit', [StudentController::class, 'submit'])->name('assignment.submit');
@@ -45,6 +42,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/classroom', [AdminController::class, 'classroomView'])->name('classroom.view');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::post('/admin/classroom/{id}/add-student', [AdminController::class, 'addStudent'])->name('admin.classroom.addStudent');
 });
 
 Route::middleware(['auth', 'instructor'])->group(function () {
@@ -53,18 +51,16 @@ Route::middleware(['auth', 'instructor'])->group(function () {
     Route::get('/instructor/create-class', [InstructorController::class, 'create'])->name('instructor.create');
     Route::post('/instructor/classes', [InstructorController::class, 'store'])->name('instructor.classes.store');
     Route::get('/instructor/classroom/{id}', [InstructorController::class, 'show'])->name('instructor.classroom.show');
-    Route::post('/instructor/classroom/{id}/add-student', [InstructorController::class, 'addStudent'])->name('instructor.classroom.addStudent');
+
 });
 
-Route::middleware(['auth', 'admin', 'instructor'])->group(function () {
-    Route::post('/classroom/{classroom}/materials', [MaterialController::class, 'store'])->name('materials.store');
-    Route::post('/classroom/{classroom}/assignments', [InstructorController::class, 'storeAss'])->name('assignments.store');
-});
-
+Route::post('/classroom/{classroom}/materials', [MaterialController::class, 'store'])->name('materials.store');
+Route::post('/classroom/{classroom}/assignments', [InstructorController::class, 'storeAss'])->name('assignments.store');
 Route::post('/classroom/{id}/thread', [InstructorController::class, 'storeThread'])->name('thread.store');
 Route::post('/thread/{thread}/reply', [InstructorController::class, 'storeReply'])->name('thread.reply');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/instructor/classroom/{id}/add-student', [InstructorController::class, 'addStudent'])->name('instructor.classroom.addStudent');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

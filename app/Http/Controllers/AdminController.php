@@ -282,4 +282,19 @@ class AdminController extends Controller
             'assignments' => $assignments,
         ]);
     }
+
+    public function addStudent(Request $request, $id)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:users,id',
+        ]);
+
+        $classroom = ClassModel::findOrFail($id);
+
+        $classroom->students()->syncWithoutDetaching([$request->student_id]);
+
+        return back()->with('success', 'Student added by instructor!');
+    }
+
+
 }

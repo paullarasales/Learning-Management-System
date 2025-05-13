@@ -11,9 +11,10 @@ class MaterialController extends Controller
 {
     public function store(Request $request)
 {
+    // dd($request->all());
     $request->validate([
         'title' => 'required|string|max:255',
-        'materials_folder' => 'required|file|mimes:pdf,docx,txt|max:10240',
+        'materials_folder' => 'required|file|mimes:pdf,docx,txt,ppt,pptx|max:10240',
     ]);
 
     if ($request->hasFile('materials_folder')) {

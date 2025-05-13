@@ -1,7 +1,6 @@
 import { useForm, usePage, router } from "@inertiajs/react";
 import AdminAuthenticatedLayout from "@/Layouts/AdminAuthenticatedLayout";
 import { useState, useEffect } from "react";
-import { Dice1 } from "lucide-react";
 
 export default function ClassroomView({
     classroom = { students: [] },
@@ -77,7 +76,7 @@ export default function ClassroomView({
 
     const handleAddStudent = (e) => {
         e.preventDefault();
-        postStudent(route("instructor.classroom.addStudent", classroom.id), {
+        postStudent(route("admin.classroom.addStudent", classroom.id), {
             onSuccess: () => resetStudent(),
         });
     };
@@ -115,7 +114,7 @@ export default function ClassroomView({
                 window.location.reload();
             },
             onError: (error) => {
-                console.error("Upload error:", errors);
+                console.error("Upload error:", error);
             },
         });
     };
@@ -669,8 +668,37 @@ export default function ClassroomView({
                                     <option value="">
                                         Select a student to add
                                     </option>
+                                    {students.map((student) => (
+                                        <option
+                                            key={student.id}
+                                            value={student.id}
+                                        >
+                                            {student.firstname}
+                                        </option>
+                                    ))}
                                 </select>
+
+                                <button
+                                    type="submit"
+                                    className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+                                >
+                                    Add Student
+                                </button>
                             </form>
+                            <ul className="space-y-2">
+                                {classroom.students.length > 0 ? (
+                                    classroom.students.map((student) => (
+                                        <li
+                                            key={student.id}
+                                            className="border px-4 py-2 rounded bg-gray-50"
+                                        >
+                                            {student.firstname}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li>No Students yet.</li>
+                                )}
+                            </ul>
                         </>
                     )}
                 </div>
