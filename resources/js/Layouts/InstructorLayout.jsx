@@ -13,7 +13,7 @@ export default function InstructorLayout({ header, children }) {
     return (
         <div className="min-h-screen bg-red-100 flex">
             <aside
-                className={`bg-navy border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
+                className={`bg-black border-r w-64 space-y-6 px-4 py-6 absolute inset-y-0 left-0 transform rounded-r-md ${
                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-50`}
             >
@@ -54,7 +54,7 @@ export default function InstructorLayout({ header, children }) {
                         Manage Classroom
                     </NavLink> */}
                     <Link
-                        href={route("admin.profile")}
+                        href={route("instructor.profile")}
                         // active={route().current("admin.profile")}
                         className="flex items-center gap-2"
                     >
@@ -64,13 +64,13 @@ export default function InstructorLayout({ header, children }) {
             </aside>
 
             <div className="flex-1 flex flex-col">
-                <div className="flex items-center justify-between bg-gray-100 border-b">
+                <div className="flex items-center justify-between bg-white border-b">
                     <div className="flex items-center p-4">
                         {route().current("instructor.dashboard") && (
                             <h1>Dashboard</h1>
                         )}
                     </div>
-                    <header className="bg-gray-100 h-16 px-4 flex items-center justify-between">
+                    <header className="bg-white h-16 px-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <button
                                 className="md:hidden"
@@ -87,7 +87,7 @@ export default function InstructorLayout({ header, children }) {
                         <div className="relative">
                             <Dropdown>
                                 <Dropdown.Trigger>
-                                    <button className="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-700 px-3 py-2 rounded-md">
+                                    <button className="inline-flex items-center gap-2  px-3 py-2 rounded-md">
                                         <span>{user.firstname}</span>
                                         <svg
                                             className="w-4 h-4"
@@ -128,7 +128,7 @@ export default function InstructorLayout({ header, children }) {
                     </header>
                 </div>
 
-                <main className="flex-1 overflow-y-auto p-4 bg-gray-100">
+                <main className="flex-1 overflow-y-auto p-4 bg-white">
                     {children}
                 </main>
             </div>

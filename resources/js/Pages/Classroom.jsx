@@ -11,11 +11,13 @@ export default function Classroom({ classroom = {}, initialThreads = [] }) {
     const [selectedAssignment, setSelectedAssignment] = useState(null);
     const [file, setFile] = useState(null);
     const { submissions = [] } = usePage().props;
+    const [assignmentTab, setAssignmentTab] = useState("ongoing");
+    const [submissionsState, setSubmissionsState] = useState(submissions);
 
     const now = new Date();
 
     // Get IDs of completed assignments
-    const completedSubmissionIds = submissions
+    const completedSubmissionIds = submissionsState
         .filter((sub) => sub.status === "completed")
         .map((sub) => sub.assignment_id);
 
@@ -33,7 +35,7 @@ export default function Classroom({ classroom = {}, initialThreads = [] }) {
     );
 
     // Completed assignments = joined with completed submissions
-    const completedAssignments = submissions
+    const completedAssignments = submissionsState
         .filter((sub) => sub.status === "completed")
         .map((sub) => assignments.find((a) => a.id === sub.assignment_id))
         .filter(Boolean); // ensure valid assignments only
@@ -311,438 +313,309 @@ export default function Classroom({ classroom = {}, initialThreads = [] }) {
                      {/* Assignment Section */}
                     {activeTab === "assignments" && (
                         <>
-                            <h2 className="text-xl font-semibold mb-4">
+                            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                                 Assignments
+                                <span
+                                    className="text-xs text-gray-400"
+                                    title="Assignments are grouped by status. Click a tab to filter."
+                                >
+                                    (What's this?)
+                                </span>
                             </h2>
-
-                            {/* Ongoing Assignments */}
-                            <div>
-                                <h3 className="text-lg font-bold text-green-600 mb-2">
-                                    Ongoing
-                                </h3>
-                                {ongoingAssignments.length > 0 ? (
-                                    <ul className="space-y-4 mb-6">
-                                        {ongoingAssignments.map(
-                                            (assignment) => {
-                                                const submission =
-                                                    submissions.find(
-                                                        (sub) =>
-                                                            sub.assignment_id ===
-                                                            assignment.id
-                                                    );
-
-                                                return (
-                                                    <li
-                                                        key={assignment.id}
-                                                        className="border rounded-lg p-4 bg-white shadow cursor-pointer"
-                                                        onClick={() =>
-                                                            setSelectedAssignment(
-                                                                assignment
-                                                            )
-                                                        }
-                                                    >
-                                                        <div className="flex justify-between items-center">
-                                                            <div>
-                                                                <h3 className="font-semibold">
-                                                                    {
-                                                                        assignment.title
-                                                                    }
-                                                                </h3>
-                                                                <p className="text-sm text-gray-500">
-                                                                    Due:{" "}
-                                                                    {new Date(
-                                                                        assignment.due_date
-                                                                    ).toLocaleDateString()}
-                                                                </p>
-                                                                {submission?.grade && (
-                                                                    <p className="text-sm text-green-600 mt-1">
-                                                                        Grade:{" "}
-                                                                        {
-                                                                            submission.grade
-                                                                        }
-                                                                    </p>
-                                                                )}
-                                                                {submission?.feedback && (
-                                                                    <p className="text-sm text-blue-600 mt-1">
-                                                                        Feedback:{" "}
-                                                                        {
-                                                                            submission.feedback
-                                                                        }
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                            <span className="text-purple-600 text-sm">
-                                                                View & Submit →
-                                                            </span>
-                                                        </div>
-                                                    </li>
-                                                );
-                                            }
-                                        )}
-                                    </ul>
-                                ) : (
-                                    <p className="text-gray-500 text-center mb-6">
-                                        No ongoing assignments.
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Past Due Assignments */}
-                            <div>
-                                <h3 className="text-lg font-bold text-red-600 mb-2">
-                                    Past Due
-                                </h3>
-                                {pastDueAssignments.length > 0 ? (
-                                    <ul className="space-y-4">
-                                        {pastDueAssignments.map(
-                                            (assignment) => {
-                                                const submission =
-                                                    submissions.find(
-                                                        (sub) =>
-                                                            sub.assignment_id ===
-                                                            assignment.id
-                                                    );
-
-                                                return (
-                                                    <li
-                                                        key={assignment.id}
-                                                        className="border rounded-lg p-4 bg-gray-100 shadow cursor-pointer"
-                                                        onClick={() =>
-                                                            setSelectedAssignment(
-                                                                assignment
-                                                            )
-                                                        }
-                                                    >
-                                                        <div className="flex justify-between items-center">
-                                                            <div>
-                                                                <h3 className="font-semibold">
-                                                                    {
-                                                                        assignment.title
-                                                                    }
-                                                                </h3>
-                                                                <p className="text-sm text-gray-500">
-                                                                    Due:{" "}
-                                                                    {new Date(
-                                                                        assignment.due_date
-                                                                    ).toLocaleDateString()}
-                                                                </p>
-                                                                {submission?.grade && (
-                                                                    <p className="text-sm text-green-600 mt-1">
-                                                                        Grade:{" "}
-                                                                        {
-                                                                            submission.grade
-                                                                        }
-                                                                    </p>
-                                                                )}
-                                                                {submission?.feedback && (
-                                                                    <p className="text-sm text-blue-600 mt-1">
-                                                                        Feedback:{" "}
-                                                                        {
-                                                                            submission.feedback
-                                                                        }
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                            <span className="text-purple-600 text-sm">
-                                                                View →
-                                                            </span>
-                                                        </div>
-                                                    </li>
-                                                );
-                                            }
-                                        )}
-                                    </ul>
-                                ) : (
-                                    <p className="text-gray-500 text-center">
-                                        No past due assignments.
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Completed Assignments */}
-                            <div>
-                                <h3 className="text-lg font-bold text-blue-600 mb-2">
-                                    Completed
-                                </h3>
-                                {completedAssignments.length > 0 ? (
-                                    <ul className="space-y-4">
-                                        {completedAssignments.map(
-                                            (assignment) => {
-                                                const submission =
-                                                    submissions.find(
-                                                        (sub) =>
-                                                            sub.assignment_id ===
-                                                            assignment.id
-                                                    );
-
-                                                return (
-                                                    <li
-                                                        key={assignment.id}
-                                                        className="border rounded-lg p-4 bg-blue-50 shadow cursor-pointer"
-                                                        onClick={() =>
-                                                            setSelectedAssignment(
-                                                                assignment
-                                                            )
-                                                        }
-                                                    >
-                                                        <div className="flex justify-between items-center">
-                                                            <div>
-                                                                <h3 className="font-semibold">
-                                                                    {
-                                                                        assignment.title
-                                                                    }
-                                                                </h3>
-                                                                <p className="text-sm text-gray-500">
-                                                                    Due:{" "}
-                                                                    {new Date(
-                                                                        assignment.due_date
-                                                                    ).toLocaleDateString()}
-                                                                </p>
-                                                                {submission?.grade && (
-                                                                    <p className="text-sm text-green-600 mt-1">
-                                                                        Grade:{" "}
-                                                                        {
-                                                                            submission.grade
-                                                                        }
-                                                                    </p>
-                                                                )}
-                                                                {submission?.feedback && (
-                                                                    <p className="text-sm text-blue-600 mt-1">
-                                                                        Feedback:{" "}
-                                                                        {
-                                                                            submission.feedback
-                                                                        }
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                            <span className="text-purple-600 text-sm">
-                                                                View →
-                                                            </span>
-                                                        </div>
-                                                    </li>
-                                                );
-                                            }
-                                        )}
-                                    </ul>
-                                ) : (
-                                    <p className="text-gray-500 text-center">
-                                        No completed assignments.
-                                    </p>
-                                )}
-                            </div>
-                            {assignments.length > 0 ? (
-                                <ul className="space-y-4">
-                                    {assignments.map((assignment) => {
-                                        const submission = submissions.find(
-                                            (sub) =>
-                                                sub.assignment_id ===
-                                                assignment.id
-                                        );
-
-                                        return (
-                                            <li
-                                                key={assignment.id}
-                                                className="border rounded-lg p-4 bg-white shadow cursor-pointer"
-                                                onClick={() =>
-                                                    setSelectedAssignment(
-                                                        assignment
-                                                    )
-                                                }
-                                            >
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <h3 className="font-semibold">
-                                                            {assignment.title}
-                                                        </h3>
-                                                        <p className="text-sm text-gray-500">
-                                                            Due:{" "}
-                                                            {new Date(
-                                                                assignment.due_date
-                                                            ).toLocaleDateString()}
-                                                        </p>
-                                                        {submission?.grade && (
-                                                            <p className="text-sm text-green-600 mt-1">
-                                                                Grade:{" "}
-                                                                {
-                                                                    submission.grade
-                                                                }
-                                                            </p>
-                                                        )}
-                                                        {submission?.feedback && (
-                                                            <p className="text-sm text-blue-600 mt-1">
-                                                                Feedback:{" "}
-                                                                {
-                                                                    submission.feedback
-                                                                }
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-purple-600 text-sm">
-                                                        View & Submit →
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            ) : (
-                                <p className="text-gray-500 text-center">
-                                    No assignments posted yet.
-                                </p>
-                            )}
-
-                            {/* Modal or Section for Viewing Assignment and Uploading Submission */}
-                            {selectedAssignment && (
-                                <div className="mt-6 p-6 border rounded-lg bg-gray-50">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <h3 className="text-lg font-bold">
-                                            {selectedAssignment.title}
-                                        </h3>
-                                        <button
-                                            onClick={() =>
-                                                setSelectedAssignment(null)
-                                            }
-                                            className="text-sm text-red-500"
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-                                    <p className="mb-2 text-gray-700">
-                                        {selectedAssignment.description}
-                                    </p>
-                                    <p className="mb-4 text-sm text-gray-500">
-                                        Due:{" "}
-                                        {new Date(
-                                            selectedAssignment.due_date
-                                        ).toLocaleString()}
-                                    </p>
-
-                                    {selectedAssignment.attachment && (
-                                        <div className="mb-4">
-                                            <a
-                                                href={`/assignments/${selectedAssignment.attachment}`}
-                                                target="_blank"
-                                                className="text-purple-600 text-sm underline"
-                                            >
-                                                Download Attachment
-                                            </a>
-                                        </div>
-                                    )}
-
-                                    {(() => {
-                                        const submission = submissions.find(
-                                            (sub) =>
-                                                sub.assignment_id ===
-                                                selectedAssignment.id
-                                        );
-
-                                        const isPastDue =
-                                            new Date(
-                                                selectedAssignment.due_date
-                                            ) < new Date();
-
-                                        if (
-                                            submission &&
-                                            submission.status === "turned_in"
-                                        ) {
-                                            return (
-                                                <p className="text-green-600 font-semibold">
-                                                    You have already submitted
-                                                    this assignment.
-                                                </p>
-                                            );
-                                        } else if (isPastDue) {
-                                            return (
-                                                <p className="text-red-600 font-semibold">
-                                                    Sorry, this assignment is
-                                                    past due and can no longer
-                                                    be submitted.
-                                                </p>
-                                            );
-                                        } else if (
-                                            submission &&
-                                            submission.status === "completed"
-                                        ) {
-                                            return (
-                                                <p className="text-green-600">
-                                                    Assignment Completed
-                                                </p>
-                                            );
-                                        } else {
-                                            return (
-                                                <form
-                                                    onSubmit={(e) => {
-                                                        e.preventDefault();
-                                                        if (!file) return;
-
-                                                        const formData =
-                                                            new FormData();
-                                                        formData.append(
-                                                            "file",
-                                                            file
-                                                        );
-                                                        formData.append(
-                                                            "assignment_id",
-                                                            selectedAssignment.id
-                                                        );
-
-                                                        axios
-                                                            .post(
-                                                                route(
-                                                                    "assignment.submit"
-                                                                ),
-                                                                formData,
-                                                                {
-                                                                    headers: {
-                                                                        "Content-Type":
-                                                                            "multipart/form-data",
-                                                                    },
-                                                                }
-                                                            )
-                                                            .then(() => {
-                                                                alert(
-                                                                    "Submission uploaded successfully!"
-                                                                );
-                                                                setFile(null);
-                                                                setSelectedAssignment(
-                                                                    null
-                                                                );
-                                                            })
-                                                            .catch(() => {
-                                                                alert(
-                                                                    "Submission failed. Try again."
-                                                                );
-                                                            });
-                                                    }}
-                                                    className="space-y-3"
-                                                >
-                                                    <input
-                                                        type="file"
-                                                        onChange={(e) =>
-                                                            setFile(
-                                                                e.target
-                                                                    .files[0]
-                                                            )
-                                                        }
-                                                        required
-                                                        className="block w-full text-sm"
-                                                    />
-                                                    <button
-                                                        type="submit"
-                                                        className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-                                                    >
-                                                        Submit Assignment
-                                                    </button>
-                                                </form>
-                                            );
+                            {/* Assignment Status Tabs */}
+                            <div className="flex gap-2 mb-4">
+                                {[
+                                    {
+                                        label: "Ongoing",
+                                        key: "ongoing",
+                                        color: "green",
+                                    },
+                                    {
+                                        label: "Past Due",
+                                        key: "pastDue",
+                                        color: "red",
+                                    },
+                                    {
+                                        label: "Completed",
+                                        key: "completed",
+                                        color: "blue",
+                                    },
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.key}
+                                        onClick={() =>
+                                            setAssignmentTab(tab.key)
                                         }
-                                    })()}
-                                </div>
+                                        className={`px-4 py-2 rounded-t font-semibold border-b-2 focus:outline-none ${
+                                            assignmentTab === tab.key
+                                                ? `border-${tab.color}-600 text-${tab.color}-600 bg-${tab.color}-50`
+                                                : "border-transparent text-gray-500 bg-white"
+                                        }`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+                            {/* Assignment Lists by Tab */}
+                            <div>
+                                {assignmentTab === "ongoing" && (
+                                    <AssignmentList
+                                        assignments={ongoingAssignments}
+                                        submissions={submissionsState}
+                                        setSelectedAssignment={
+                                            setSelectedAssignment
+                                        }
+                                        status="Ongoing"
+                                        badgeColor="green"
+                                    />
+                                )}
+                                {assignmentTab === "pastDue" && (
+                                    <AssignmentList
+                                        assignments={pastDueAssignments}
+                                        submissions={submissionsState}
+                                        setSelectedAssignment={
+                                            setSelectedAssignment
+                                        }
+                                        status="Past Due"
+                                        badgeColor="red"
+                                    />
+                                )}
+                                {assignmentTab === "completed" && (
+                                    <AssignmentList
+                                        assignments={completedAssignments}
+                                        submissions={submissionsState}
+                                        setSelectedAssignment={
+                                            setSelectedAssignment
+                                        }
+                                        status="Completed"
+                                        badgeColor="blue"
+                                    />
+                                )}
+                            </div>
+                            {/* Assignment Details Modal */}
+                            {selectedAssignment && (
+                                <AssignmentDetailsModal
+                                    assignment={selectedAssignment}
+                                    submissions={submissionsState}
+                                    setFile={setFile}
+                                    file={file}
+                                    setSelectedAssignment={
+                                        setSelectedAssignment
+                                    }
+                                    setAssignments={setAssignments}
+                                    setAssignmentTab={setAssignmentTab}
+                                    setSubmissionsState={setSubmissionsState}
+                                />
                             )}
                         </>
                     )}
                 </div>
             </div>
         </AuthenticatedLayout>
+    );
+}
+
+// Helper Components
+function AssignmentList({
+    assignments,
+    submissions,
+    setSelectedAssignment,
+    status,
+    badgeColor,
+}) {
+    if (!assignments.length) {
+        return (
+            <p className="text-gray-500 text-center mb-6">
+                No {status.toLowerCase()} assignments.
+            </p>
+        );
+    }
+    return (
+        <ul className="space-y-4 mb-6">
+            {assignments.map((assignment) => {
+                const submission = submissions.find(
+                    (sub) => sub.assignment_id === assignment.id
+                );
+                return (
+                    <li
+                        key={assignment.id}
+                        className="border rounded-lg p-4 bg-white shadow cursor-pointer hover:bg-gray-50 transition"
+                        onClick={() => setSelectedAssignment(assignment)}
+                        title="Click to view details and submit"
+                    >
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h3 className="font-semibold flex items-center gap-2">
+                                    {assignment.title}
+                                    <span
+                                        className={`inline-block px-2 py-0.5 rounded text-xs bg-${badgeColor}-100 text-${badgeColor}-700 ml-2`}
+                                    >
+                                        {status}
+                                    </span>
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    Due:{" "}
+                                    {new Date(
+                                        assignment.due_date
+                                    ).toLocaleDateString()}
+                                </p>
+                                {submission?.grade && (
+                                    <p className="text-sm text-green-600 mt-1">
+                                        Grade: {submission.grade}
+                                    </p>
+                                )}
+                                {submission?.feedback && (
+                                    <p className="text-sm text-blue-600 mt-1">
+                                        Feedback: {submission.feedback}
+                                    </p>
+                                )}
+                            </div>
+                            <span className="text-purple-600 text-sm font-medium">
+                                {status === "Ongoing"
+                                    ? "View & Submit →"
+                                    : "View →"}
+                            </span>
+                        </div>
+                    </li>
+                );
+            })}
+        </ul>
+    );
+}
+
+function AssignmentDetailsModal({
+    assignment,
+    submissions,
+    setFile,
+    file,
+    setSelectedAssignment,
+    setAssignments,
+    setAssignmentTab,
+    setSubmissionsState,
+}) {
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const submission = submissions.find(
+        (sub) => sub.assignment_id === assignment.id
+    );
+    const isPastDue = new Date(assignment.due_date) < new Date();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        setError(null);
+        setSuccess(null);
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("assignment_id", assignment.id);
+        try {
+            const response = await axios.post(
+                route("assignment.submit"),
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
+            setSuccess("Submission uploaded successfully!");
+            setFile(null);
+            setSelectedAssignment(null);
+            // Add the new submission to the local state for real-time UI update
+            setSubmissionsState((prev) => [
+                ...prev,
+                {
+                    assignment_id: assignment.id,
+                    status: "completed",
+                    // add any other fields you want to show in completed tab
+                },
+            ]);
+            setAssignmentTab("completed");
+        } catch (err) {
+            setError("Submission failed. Try again.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+            <div className="w-full max-w-lg bg-white rounded-lg shadow-lg p-6 relative animate-fade-in">
+                <button
+                    onClick={() => setSelectedAssignment(null)}
+                    className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg"
+                    title="Close"
+                >
+                    ×
+                </button>
+                <h3 className="text-lg font-bold mb-2">{assignment.title}</h3>
+                <p className="mb-2 text-gray-700">{assignment.description}</p>
+                <p className="mb-4 text-sm text-gray-500">
+                    Due: {new Date(assignment.due_date).toLocaleString()}
+                </p>
+                {assignment.attachment && (
+                    <div className="mb-4">
+                        <a
+                            href={`/assignments/${assignment.attachment}`}
+                            target="_blank"
+                            className="text-purple-600 text-sm underline"
+                        >
+                            Download Attachment
+                        </a>
+                    </div>
+                )}
+                {error && <div className="text-red-600 mb-2">{error}</div>}
+                {success && (
+                    <div className="text-green-600 mb-2">{success}</div>
+                )}
+                {submission && submission.status === "turned_in" ? (
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-block px-2 py-0.5 rounded text-xs bg-green-100 text-green-700">
+                            Submitted
+                        </span>
+                        <span className="text-green-600 font-semibold">
+                            You have already submitted this assignment.
+                        </span>
+                    </div>
+                ) : isPastDue ? (
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-block px-2 py-0.5 rounded text-xs bg-red-100 text-red-700">
+                            Past Due
+                        </span>
+                        <span className="text-red-600 font-semibold">
+                            Sorry, this assignment is past due and can no longer
+                            be submitted.
+                        </span>
+                    </div>
+                ) : submission && submission.status === "completed" ? (
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-block px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700">
+                            Completed
+                        </span>
+                        <span className="text-green-600">
+                            Assignment Completed
+                        </span>
+                    </div>
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-3">
+                        <label className="block text-sm font-medium mb-1">
+                            Upload your submission:
+                        </label>
+                        <input
+                            type="file"
+                            onChange={(e) => setFile(e.target.files[0])}
+                            required
+                            className="block w-full text-sm border rounded px-2 py-1"
+                        />
+                        <button
+                            type="submit"
+                            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 w-full"
+                            disabled={submitting}
+                        >
+                            {submitting ? "Submitting..." : "Submit Assignment"}
+                        </button>
+                    </form>
+                )}
+            </div>
+        </div>
     );
 }

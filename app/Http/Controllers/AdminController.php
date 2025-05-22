@@ -109,7 +109,7 @@ class AdminController extends Controller
 
         ClassModel::create($data);
 
-        return back();
+        return redirect()->route('classroom.view')->with('success', 'Classroom created successfully');
     }
 
     public function classroomView()
@@ -163,7 +163,7 @@ class AdminController extends Controller
 
         User::create($data);
 
-        return response()->json(['message' => 'Instructor account created successfully']);
+        return redirect()->route('admin.instructor')->with('message', 'Instructor account created successfully.');
     }
 
     public function edit(User $user)

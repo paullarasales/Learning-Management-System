@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Material;
+use App\Models\ClassModel;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\NewMaterialNotification;
 
 class MaterialController extends Controller
 {
@@ -29,11 +31,19 @@ class MaterialController extends Controller
         $file->move($uploadPath, $filename);
         $filePath =  $filename;
 
-        Material::create([
+        $material = Material::create([
             'class_id' => $request->input('class_id'),
             'materials_folder' => $filePath,
             'title' => $request->input('title'),
         ]);
+
+        // Notify all students in the class
+        $class = ClassModel::with('students')->find($request->input('class_id'));
+        if ($class) {
+            foreach ($class->students as $student) {
+                $student->notify(new NewMaterialNotification($material));
+            }
+        }
 
         return back()->with('success', 'Material uploaded successfully');
     } else {

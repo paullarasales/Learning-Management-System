@@ -1,6 +1,9 @@
 import { useForm, usePage, router } from "@inertiajs/react";
 import InstructorLayout from "@/Layouts/InstructorLayout";
 import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import { FiVideo } from "react-icons/fi";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Classroom({
     classroom = { students: [] },
@@ -12,6 +15,8 @@ export default function Classroom({
     const [threads, setThreads] = useState(initialThreads);
     const [materials, setMaterials] = useState(props.materials || []);
     const [gradingData, setGradingData] = useState({});
+    const [assignmentTab, setAssignmentTab] = useState("ongoing");
+    const [gradingAll, setGradingAll] = useState(false);
 
     // Update threads when props change
     useEffect(() => {
@@ -111,10 +116,18 @@ export default function Classroom({
         e.preventDefault();
         postMaterial(route("materials.store", { classroom: classroom.id }), {
             forceFormData: true,
-            onSuccess: () => {
-                console.log("Uploaded successfully!");
+            onSuccess: (response) => {
                 materialReset();
-                window.location.reload();
+                let newMaterial = response?.material || materialData;
+                if (!newMaterial.id) {
+                    newMaterial = {
+                        ...newMaterial,
+                        id: `temp-${Date.now()}-${Math.random()}`,
+                        created_at: new Date().toISOString(),
+                    };
+                }
+                setMaterials((prev) => [newMaterial, ...(prev || [])]);
+                setActiveTab("materials");
             },
             onError: (errors) => {
                 console.error("Upload error:", errors);
@@ -149,22 +162,53 @@ export default function Classroom({
                 toast.success("Grade updated!");
             },
             onError: () => {
-                toast.error("Failed to upadate");
+                toast.error("Failed to update");
             },
         });
     };
 
+    const getAssignmentsByStatus = (status) => {
+        const now = new Date();
+        if (!props.assignments) return [];
+        if (status === "ongoing") {
+            return props.assignments.filter((a) => new Date(a.due_date) >= now);
+        } else if (status === "pastDue") {
+            return props.assignments.filter(
+                (a) =>
+                    new Date(a.due_date) < now &&
+                    (!a.submissions || a.submissions.length === 0)
+            );
+        } else if (status === "completed") {
+            return props.assignments.filter(
+                (a) => a.submissions && a.submissions.length > 0
+            );
+        }
+        return props.assignments;
+    };
+
     return (
         <InstructorLayout>
+            <ToastContainer position="top-right" autoClose={3000} />
             <div className="space-y-4">
                 {/* Header */}
-                <div className="border-b pb-4 mb-4">
-                    <h1 className="text-3xl font-semibold text-purple-700">
-                        {classroom?.name || "Classroom"}
-                    </h1>
-                    <p className="text-gray-600">
-                        {classroom?.description || ""}
-                    </p>
+                <div className="flex items-center justify-between border-b pb-4 mb-4">
+                    <div>
+                        {" "}
+                        <h1 className="text-3xl font-semibold text-purple-700">
+                            {classroom?.name || "Classroom"}
+                        </h1>
+                        <p className="text-gray-600">
+                            {classroom?.description || ""}
+                        </p>
+                    </div>
+
+                    <a
+                        href="#"
+                        title="Start Video Call"
+                        className="text-purple-600 hover:text-purple-800 text-3xl p-2 rounded-full transition"
+                    >
+                        <FiVideo />
+                    </a>
                 </div>
 
                 {/* Tab Buttons */}
@@ -427,7 +471,7 @@ export default function Classroom({
 
                     {activeTab === "assignments" && (
                         <div>
-                            {/* Upload Assignment Form */}
+                            {/* Assignment Creation Form */}
                             <form
                                 onSubmit={handleCreateAssignment}
                                 encType="multipart/form-data"
@@ -493,177 +537,298 @@ export default function Classroom({
                                         : "Upload Assignment"}
                                 </button>
                             </form>
-
-                            {/* Assignment List */}
-                            {props.assignments?.length > 0 && (
-                                <div className="space-y-4">
-                                    <h2 className="text-xl font-semibold">
-                                        Uploaded Assignments
-                                    </h2>
-                                    <ul className="space-y-2">
-                                        {props.assignments.map((assignment) => (
-                                            <li
-                                                key={assignment.id}
-                                                className="border p-4 rounded shadow-sm bg-white cursor-pointer"
-                                                onClick={() =>
-                                                    setSelectedAssignment(
-                                                        assignment
-                                                    )
-                                                }
-                                            >
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <h3 className="font-medium">
-                                                            {assignment.title}
-                                                        </h3>
-                                                        <p className="text-purple-600">
-                                                            Click to view
-                                                            details
-                                                        </p>
-                                                    </div>
-                                                    <span className="text-sm text-gray-400">
+                            {/* Assignment Status Tabs */}
+                            <div className="flex gap-2 mb-4">
+                                {[
+                                    {
+                                        label: "Ongoing",
+                                        key: "ongoing",
+                                        color: "green",
+                                    },
+                                    {
+                                        label: "Past Due",
+                                        key: "pastDue",
+                                        color: "red",
+                                    },
+                                    {
+                                        label: "Completed",
+                                        key: "completed",
+                                        color: "blue",
+                                    },
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.key}
+                                        onClick={() =>
+                                            setAssignmentTab(tab.key)
+                                        }
+                                        className={`px-4 py-2 rounded-t font-semibold border-b-2 focus:outline-none ${
+                                            assignmentTab === tab.key
+                                                ? `border-${tab.color}-600 text-${tab.color}-600 bg-${tab.color}-50`
+                                                : "border-transparent text-gray-500 bg-white"
+                                        }`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+                            {/* Assignment List by Tab */}
+                            <ul className="space-y-4 mb-6">
+                                {getAssignmentsByStatus(assignmentTab).map(
+                                    (assignment) => (
+                                        <li
+                                            key={assignment.id}
+                                            className="border rounded-lg p-4 bg-white shadow cursor-pointer hover:bg-gray-50 transition"
+                                            onClick={() =>
+                                                setSelectedAssignment(
+                                                    assignment
+                                                )
+                                            }
+                                            title="Click to view and grade submissions"
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="font-semibold flex items-center gap-2">
+                                                        {assignment.title}
+                                                        <span
+                                                            className={`inline-block px-2 py-0.5 rounded text-xs bg-${
+                                                                assignmentTab ===
+                                                                "ongoing"
+                                                                    ? "green"
+                                                                    : assignmentTab ===
+                                                                      "pastDue"
+                                                                    ? "red"
+                                                                    : "blue"
+                                                            }-100 text-${
+                                                                assignmentTab ===
+                                                                "ongoing"
+                                                                    ? "green"
+                                                                    : assignmentTab ===
+                                                                      "pastDue"
+                                                                    ? "red"
+                                                                    : "blue"
+                                                            }-700 ml-2`}
+                                                        >
+                                                            {assignmentTab
+                                                                .charAt(0)
+                                                                .toUpperCase() +
+                                                                assignmentTab.slice(
+                                                                    1
+                                                                )}
+                                                        </span>
+                                                    </h3>
+                                                    <p className="text-sm text-gray-500">
+                                                        Due:{" "}
                                                         {new Date(
-                                                            assignment.created_at
-                                                        ).toLocaleString()}
-                                                    </span>
+                                                            assignment.due_date
+                                                        ).toLocaleDateString()}
+                                                    </p>
+                                                    <p className="text-xs text-gray-400 mt-1">
+                                                        {assignment.submissions
+                                                            ?.length || 0}{" "}
+                                                        submission(s)
+                                                    </p>
                                                 </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Assignment Details Section */}
+                                                <span className="text-purple-600 text-sm font-medium">
+                                                    Grade & Details →
+                                                </span>
+                                            </div>
+                                        </li>
+                                    )
+                                )}
+                                {getAssignmentsByStatus(assignmentTab)
+                                    .length === 0 && (
+                                    <li className="text-gray-500 text-center py-8">
+                                        No assignments in this category.
+                                    </li>
+                                )}
+                            </ul>
+                            {/* Assignment Details Modal for Grading */}
                             {selectedAssignment && (
-                                <div
-                                    id="assignment-details"
-                                    className="mt-8 border-t pt-4 space-y-4"
-                                >
-                                    <h2 className="text-2xl font-bold text-purple-700">
-                                        Assignment Details
-                                    </h2>
-                                    <p>
-                                        <strong>Title:</strong>{" "}
-                                        {selectedAssignment.title}
-                                    </p>
-                                    <p>
-                                        <strong>Due Date:</strong>{" "}
-                                        {new Date(
-                                            selectedAssignment.due_date
-                                        ).toLocaleDateString()}
-                                    </p>
-                                    <p>
-                                        <strong>Created At:</strong>{" "}
-                                        {new Date(
-                                            selectedAssignment.created_at
-                                        ).toLocaleString()}
-                                    </p>
-
-                                    {/* Submissions List */}
-                                    {selectedAssignment.submissions.map(
-                                        (submission) => (
-                                            <li
-                                                key={submission.id}
-                                                className="border rounded p-4 bg-white shadow-sm"
-                                            >
-                                                <div className="flex justify-between items-start gap-4 flex-wrap">
-                                                    <div className="flex-1">
-                                                        <p className="font-medium">
-                                                            {
-                                                                submission
-                                                                    .student
-                                                                    ?.name
-                                                            }
-                                                        </p>
-                                                        <p className="text-sm text-gray-600">
-                                                            Submission ID:{" "}
-                                                            {submission.id}
-                                                        </p>
-                                                        <p className="text-sm text-gray-600">
-                                                            Grade:{" "}
-                                                            <input
-                                                                type="text"
-                                                                defaultValue={
-                                                                    submission.grade ||
-                                                                    ""
-                                                                }
-                                                                onChange={(e) =>
-                                                                    setGradingData(
-                                                                        (
-                                                                            prev
-                                                                        ) => ({
-                                                                            ...prev,
-                                                                            [submission.id]:
-                                                                                {
-                                                                                    ...prev[
-                                                                                        submission
-                                                                                            .id
-                                                                                    ],
-                                                                                    grade: e
-                                                                                        .target
-                                                                                        .value,
-                                                                                },
-                                                                        })
-                                                                    )
-                                                                }
-                                                                className="border p-1 w-24 rounded"
-                                                            />
-                                                        </p>
-                                                        <p className="text-sm text-gray-600 mt-2">
-                                                            Feedback:
-                                                            <textarea
-                                                                defaultValue={
-                                                                    submission.feedback ||
-                                                                    ""
-                                                                }
-                                                                onChange={(e) =>
-                                                                    setGradingData(
-                                                                        (
-                                                                            prev
-                                                                        ) => ({
-                                                                            ...prev,
-                                                                            [submission.id]:
-                                                                                {
-                                                                                    ...prev[
-                                                                                        submission
-                                                                                            .id
-                                                                                    ],
-                                                                                    feedback:
-                                                                                        e
-                                                                                            .target
-                                                                                            .value,
-                                                                                },
-                                                                        })
-                                                                    )
-                                                                }
-                                                                className="border w-full p-1 rounded mt-1"
-                                                                rows={2}
-                                                            />
-                                                        </p>
-                                                        <button
-                                                            onClick={() =>
-                                                                updateGrade(
-                                                                    submission.id
-                                                                )
-                                                            }
-                                                            className="mt-2 px-3 py-1 bg-purple-600 text-white rounded text-sm"
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+                                    <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6 relative animate-fade-in overflow-y-auto max-h-[90vh]">
+                                        <button
+                                            onClick={() =>
+                                                setSelectedAssignment(null)
+                                            }
+                                            className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg"
+                                            title="Close"
+                                        >
+                                            ×
+                                        </button>
+                                        <h3 className="text-lg font-bold mb-2">
+                                            {selectedAssignment.title}
+                                        </h3>
+                                        <p className="mb-2 text-gray-700">
+                                            {selectedAssignment.description}
+                                        </p>
+                                        <p className="mb-4 text-sm text-gray-500">
+                                            Due:{" "}
+                                            {new Date(
+                                                selectedAssignment.due_date
+                                            ).toLocaleString()}
+                                        </p>
+                                        <h4 className="font-semibold mb-2">
+                                            Submissions
+                                        </h4>
+                                        <ul className="space-y-4">
+                                            {selectedAssignment.submissions &&
+                                            selectedAssignment.submissions
+                                                .length > 0 ? (
+                                                selectedAssignment.submissions.map(
+                                                    (submission) => (
+                                                        <li
+                                                            key={submission.id}
+                                                            className="border rounded p-4 bg-gray-50 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
                                                         >
-                                                            Save Grade
-                                                        </button>
-                                                    </div>
-                                                    <div>
-                                                        <a
-                                                            href={`/submissions/${submission.assignment_folder}`}
-                                                            target="_blank"
-                                                            className="text-purple-600 underline"
-                                                        >
-                                                            View Submission
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        )
-                                    )}
+                                                            <div className="flex-1">
+                                                                <p className="font-medium">
+                                                                    {submission.student
+                                                                        ? `${submission.student.firstname}`
+                                                                        : "Unknown Student"}
+                                                                </p>
+                                                                <p className="text-xs text-gray-500">
+                                                                    Submitted:{" "}
+                                                                    {submission.created_at
+                                                                        ? new Date(
+                                                                              submission.created_at
+                                                                          ).toLocaleString()
+                                                                        : "-"}
+                                                                </p>
+                                                                <div className="flex flex-col md:flex-row md:items-center gap-2 mt-2">
+                                                                    <label className="text-sm mr-2">
+                                                                        Grade:
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        defaultValue={
+                                                                            submission.grade ||
+                                                                            ""
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) =>
+                                                                            setGradingData(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    [submission.id]:
+                                                                                        {
+                                                                                            ...prev[
+                                                                                                submission
+                                                                                                    .id
+                                                                                            ],
+                                                                                            grade: e
+                                                                                                .target
+                                                                                                .value,
+                                                                                        },
+                                                                                })
+                                                                            )
+                                                                        }
+                                                                        className="border p-1 w-20 rounded"
+                                                                    />
+                                                                    <label className="text-sm ml-4 mr-2">
+                                                                        Feedback:
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        defaultValue={
+                                                                            submission.feedback ||
+                                                                            ""
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) =>
+                                                                            setGradingData(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    [submission.id]:
+                                                                                        {
+                                                                                            ...prev[
+                                                                                                submission
+                                                                                                    .id
+                                                                                            ],
+                                                                                            feedback:
+                                                                                                e
+                                                                                                    .target
+                                                                                                    .value,
+                                                                                        },
+                                                                                })
+                                                                            )
+                                                                        }
+                                                                        className="border p-1 w-40 rounded"
+                                                                    />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() =>
+                                                                            updateGrade(
+                                                                                submission.id
+                                                                            )
+                                                                        }
+                                                                        className="ml-2 px-3 py-1 bg-purple-600 text-white rounded text-sm"
+                                                                    >
+                                                                        Save
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <a
+                                                                    href={`/submissions/${submission.assignment_folder}`}
+                                                                    target="_blank"
+                                                                    className="text-purple-600 underline"
+                                                                >
+                                                                    View
+                                                                    Submission
+                                                                </a>
+                                                            </div>
+                                                        </li>
+                                                    )
+                                                )
+                                            ) : (
+                                                <li className="text-gray-400">
+                                                    No submissions yet.
+                                                </li>
+                                            )}
+                                        </ul>
+                                        {selectedAssignment.submissions &&
+                                            selectedAssignment.submissions
+                                                .length > 0 && (
+                                                <button
+                                                    onClick={() => {
+                                                        setGradingAll(true);
+                                                        selectedAssignment.submissions.forEach(
+                                                            (submission) => {
+                                                                if (
+                                                                    gradingData[
+                                                                        submission
+                                                                            .id
+                                                                    ]
+                                                                ) {
+                                                                    updateGrade(
+                                                                        submission.id
+                                                                    );
+                                                                }
+                                                            }
+                                                        );
+                                                        setTimeout(
+                                                            () =>
+                                                                setGradingAll(
+                                                                    false
+                                                                ),
+                                                            1000
+                                                        );
+                                                    }}
+                                                    className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                                    disabled={gradingAll}
+                                                >
+                                                    {gradingAll
+                                                        ? "Saving..."
+                                                        : "Save All Grades"}
+                                                </button>
+                                            )}
+                                    </div>
                                 </div>
                             )}
                         </div>

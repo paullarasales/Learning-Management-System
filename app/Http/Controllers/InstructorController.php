@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewAssignmentNotification;
 use App\Models\User;
 use App\Models\Thread;
 use App\Models\Material;
@@ -146,43 +147,73 @@ class InstructorController extends Controller
         return back();
     }
 
-    public function storeAss(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,docx,txt,ppt,pptx|max:10240', // You can adjust the allowed file types if necessary
-            'classroom_id' => 'required|exists:classes,id', // Ensuring the class ID exists
-            'due_date' => 'required|date', // Validate due date
+public function storeAss(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'file' => 'required|file|mimes:pdf,docx,txt,ppt,pptx|max:10240',
+        'classroom_id' => 'required|exists:classes,id',
+        'due_date' => 'required|date',
+    ]);
+
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+        $uploadPath = public_path('assignments');
+
+        if (!File::exists($uploadPath)) {
+            File::makeDirectory($uploadPath, 0777, true);
+        }
+
+        $file->move($uploadPath, $filename);
+        $filePath = $filename;
+
+        // Create a new assignment record
+        $assignment = Assignment::create([
+            'class_id' => $request->input('classroom_id'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description', ''),
+            'due_date' => $request->input('due_date'),
+            'attachment' => $filePath,
         ]);
 
-        // Check if a file is uploaded
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $uploadPath = public_path('assignments'); // Folder where you want to store the files
-
-            // Create the directory if it doesn't exist
-            if (!File::exists($uploadPath)) {
-                File::makeDirectory($uploadPath, 0777, true);
+        // Notify all students in the class about the new assignment
+        $class = ClassModel::find($request->input('classroom_id'));
+        if ($class) {
+            foreach ($class->students as $student) {
+                $student->notify(new \App\Notifications\NewAssignmentNotification($assignment));
             }
-
-            // Move the file to the designated folder
-            $file->move($uploadPath, $filename);
-            $filePath = $filename; // Save the filename (not full path) to the database
-
-            // Create a new assignment record
-            Assignment::create([
-                'class_id' => $request->input('classroom_id'),
-                'title' => $request->input('title'),
-                'description' => $request->input('description', ''), // Optional description
-                'due_date' => $request->input('due_date'),
-                'attachment' => $filePath, // Save just the filename to database
-            ]);
-
-            return back()->with('success', 'Assignment uploaded successfully');
-        } else {
-            return back()->with('error', 'Assignment not uploaded successfully');
         }
+
+        return back()->with('success', 'Assignment uploaded successfully');
+    } else {
+        return back()->with('error', 'Assignment not uploaded successfully');
+    }
+}
+
+public function showProfile()
+    {
+        return inertia('Instructor/Profile', [
+            'user' => Auth::user(),
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'firstname' => 'required|string|max:255',
+            'middlename' => 'nullable|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'contact_number' => 'nullable|string|max:255',
+            'specialization' => 'nullable|string|max:255',
+            'bio' => 'nullable|string',
+        ]);
+        $user->update($request->only([
+            'firstname', 'middlename', 'lastname', 'email', 'contact_number', 'specialization', 'bio'
+        ]));
+        return response()->json(['success' => true]);
     }
 
 }

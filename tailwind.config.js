@@ -25,6 +25,7 @@ export default {
             },
             width: {
                 container: "300px",
+                image: "500px",
             },
         },
     },

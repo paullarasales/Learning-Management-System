@@ -12,17 +12,16 @@ export default function AuthenticatedLayout({ header, children }) {
         <div className="flex bg-gray-100 min-h-screen">
             {/* Sidebar */}
             <div
-                className={`w-64 bg-white border-r transition-all duration-300 flex flex-col ${
+                className={`w-64 bg-black border-r transition-all duration-300 flex flex-col ${
                     sidebarOpen ? "block" : "hidden"
                 } sm:flex`}
             >
                 {/* Top Logo */}
                 <div className="h-16 flex items-center justify-center gap-2 p-4">
                     <Link href="/student/dashboard">
-                        <h1 className="text-4xl font-semibold tracking-widest text-black">
+                        <h1 className="text-4xl font-semibold tracking-widest text-white">
                             E D U X
                         </h1>
-                        {/* <ApplicationLogo className="h-10 w-auto text-indigo-600" /> */}
                     </Link>
                 </div>
 
@@ -31,8 +30,8 @@ export default function AuthenticatedLayout({ header, children }) {
                     <p className="text-gray-600 font-normal">Overview</p>
 
                     <NavLink
-                        href={route("dashboard")}
-                        active={route().current("dashboard")}
+                        href={route("student.dashboard")}
+                        active={route().current("student.dashboard")}
                         className="w-full block text-left font-semibold"
                     >
                         Dashboard
@@ -45,14 +44,22 @@ export default function AuthenticatedLayout({ header, children }) {
                     >
                         Class
                     </NavLink>
+
+                    <NavLink
+                        href={route("student.notifications")}
+                        active={route().current("student.notifications")}
+                        className="w-full block text-left font-bold"
+                    >
+                        Notifation
+                    </NavLink>
                 </div>
 
                 {/* Sticky Profile + Logout */}
-                <div className="p-4 border-t bg-white sticky bottom-0">
+                <div className="p-4 border-t bg-black sticky bottom-0">
                     <NavLink
                         href={route("profile.edit")}
                         active={route().current("profile.edit")}
-                        className="w-full px-3 py-2 rounded-md text-sm font-medium text-gray-500"
+                        className="w-full px-3 py-2 rounded-md text-sm font-medium"
                     >
                         Profile
                     </NavLink>
@@ -60,7 +67,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         href={route("logout")}
                         method="post"
                         as="button"
-                        className="w-full px-3 py-2 text-left rounded-md text-sm font-medium text-red-500 hover:text-red-800"
+                        className="w-full px-3 py-2 text-left rounded-md text-sm font-medium text-white hover:text-red-800"
                     >
                         Log Out
                     </Link>
@@ -70,7 +77,7 @@ export default function AuthenticatedLayout({ header, children }) {
             {/* Main content */}
             <div className="flex flex-col flex-1 min-h-screen">
                 {/* Top Bar */}
-                <header className="flex items-center h-16 bg-gray-100 px-4 sm:px-6 lg:px-8 gap-4">
+                <header className="flex items-center h-16 bg-white px-4 sm:px-6 lg:px-8 gap-4">
                     {/* Sidebar Toggle */}
                     <div className="flex items-center gap-2">
                         <button
@@ -98,7 +105,9 @@ export default function AuthenticatedLayout({ header, children }) {
 
                 {/* Content scrolls independently if needed */}
                 <div className="flex-1 overflow-y-auto">
-                    <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+                    <main className="p-4 sm:p-6 lg:p-8 bg-white">
+                        {children}
+                    </main>
                 </div>
             </div>
         </div>

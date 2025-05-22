@@ -7,6 +7,7 @@ use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,6 +27,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/classroom/{id}', [StudentController::class, 'show'])->name('classes.show');
     Route::post('/assignment/submit', [StudentController::class, 'submit'])->name('assignment.submit');
     Route::put('/submissions/{submission}/grade', [SubmissionController::class, 'addGrade']);
+    Route::get('/student/notifications', [NotificationController::class, 'notification'])->name('student.notifications');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -51,7 +55,8 @@ Route::middleware(['auth', 'instructor'])->group(function () {
     Route::get('/instructor/create-class', [InstructorController::class, 'create'])->name('instructor.create');
     Route::post('/instructor/classes', [InstructorController::class, 'store'])->name('instructor.classes.store');
     Route::get('/instructor/classroom/{id}', [InstructorController::class, 'show'])->name('instructor.classroom.show');
-
+    Route::get('/instructor/profile', [InstructorController::class, 'showProfile'])->name('instructor.profile');
+    Route::put('/instructor/profile', [InstructorController::class, 'update']);
 });
 
 Route::post('/classroom/{classroom}/materials', [MaterialController::class, 'store'])->name('materials.store');

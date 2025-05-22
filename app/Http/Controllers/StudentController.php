@@ -146,7 +146,7 @@ class StudentController extends Controller
                     'assignment_id' => $assignment->id,
                     'student_id' => $student->id,
                     'assignment_folder' => $filePath,
-                    'status' => 'turned_in',
+                    'status' => 'completed',
                 ]);
 
             return response()->json(['message' => 'Assignment submitted successfully.']);

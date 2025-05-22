@@ -85,10 +85,15 @@ export default function InstructorLayout({ header, children }) {
                             <h1 className="text-xl font-semibold">Class</h1>
                         )}
                         {route().current("classroom.create") && (
-                            <h1 className="text-xl font-semibold">Class</h1>
+                            <h1 className="text-xl font-semibold">
+                                Manage Classs
+                            </h1>
                         )}
                         {route().current("admin.profile") && (
                             <h1 className="text-xl font-semibold">Profile</h1>
+                        )}
+                        {route().current("admin.classroom.view") && (
+                            <h1 className="text-xl font-semibold">Classroom</h1>
                         )}
                     </div>
                     <header className="bg-white h-16 px-4 flex items-center justify-between">
@@ -108,7 +113,7 @@ export default function InstructorLayout({ header, children }) {
                         <div className="relative">
                             <Dropdown>
                                 <Dropdown.Trigger>
-                                    <button className="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-700 px-3 py-2 rounded-md">
+                                    <button className="inline-flex items-center gap-2  px-3 py-2 rounded-md">
                                         <span>{user.firstname}</span>
                                         <svg
                                             className="w-4 h-4"

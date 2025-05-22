@@ -22,50 +22,91 @@ export default function Dashboard({ classes }) {
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
+            <div className="min-h-screen bg-white ">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden bg-white">
                         <div className="p-6 text-gray-900">
-                            <h3 className="text-lg font-bold mb-6">
+                            <h3 className="text-2xl font-bold text-indigo-800 mb-8">
                                 Your Classes
                             </h3>
 
                             {/* Class Cards */}
                             {classes.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                                     {classes.map((cls) => (
                                         <div
                                             key={cls.id}
-                                            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-200 ease-in-out cursor-pointer"
+                                            className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col h-full transform transition duration-300 hover:-translate-y-1 hover:shadow-2xl border border-transparent hover:border-indigo-300 cursor-pointer group"
                                             onClick={() =>
                                                 handleClassClick(cls.id)
                                             }
                                         >
-                                            <div className="p-6">
-                                                <h4 className="text-xl font-semibold text-gray-800 truncate">
+                                            {cls.photo && (
+                                                <div className="aspect-w-16 aspect-h-9 bg-gray-100 flex items-center justify-center">
+                                                    <img
+                                                        src={`/class/${cls.photo}`}
+                                                        alt={cls.name}
+                                                        className="object-contain"
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="p-5 flex flex-col flex-grow">
+                                                <h4 className="text-xl font-bold text-indigo-900 mb-1 truncate">
                                                     {cls.name}
                                                 </h4>
-                                                <p className="text-sm text-gray-600 mt-2">
-                                                    {cls.description}
+                                                <p className="text-gray-600 text-sm mb-3 line-clamp-2 min-h-[2.5em]">
+                                                    {cls.description ||
+                                                        "No description available."}
                                                 </p>
-                                                <p className="text-sm mt-4">
-                                                    <span className="font-medium">
-                                                        Instructor:
-                                                    </span>{" "}
-                                                    {cls.instructor?.firstname}{" "}
-                                                    {cls.instructor?.lastname}
-                                                </p>
-                                                <p className="text-xs text-gray-500 italic mt-1">
-                                                    Subject Code: {cls.subcode}
-                                                </p>
+                                                <div className="mt-auto space-y-1">
+                                                    {cls.instructor && (
+                                                        <p className="text-sm text-gray-700">
+                                                            <span className="font-semibold text-indigo-700">
+                                                                Instructor:
+                                                            </span>{" "}
+                                                            {
+                                                                cls.instructor
+                                                                    .firstname
+                                                            }{" "}
+                                                            {
+                                                                cls.instructor
+                                                                    .lastname
+                                                            }
+                                                        </p>
+                                                    )}
+                                                    {cls.subcode && (
+                                                        <p className="text-xs text-gray-500 italic">
+                                                            Subject Code:{" "}
+                                                            {cls.subcode}
+                                                        </p>
+                                                    )}
+                                                    {cls.section && (
+                                                        <p className="text-sm text-gray-700">
+                                                            <span className="font-semibold text-indigo-700">
+                                                                Section:
+                                                            </span>{" "}
+                                                            {cls.section}
+                                                        </p>
+                                                    )}
+                                                    {cls.yearlevel && (
+                                                        <p className="text-sm text-gray-700">
+                                                            <span className="font-semibold text-indigo-700">
+                                                                Year:
+                                                            </span>{" "}
+                                                            {cls.yearlevel}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-gray-600">
-                                    You are not enrolled in any classes yet.
-                                </p>
+                                <div className="flex justify-center items-center h-64">
+                                    <span className="text-lg text-gray-500">
+                                        You are not enrolled in any classes yet.
+                                    </span>
+                                </div>
                             )}
                         </div>
                     </div>

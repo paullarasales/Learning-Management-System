@@ -4,47 +4,82 @@ import InstructorLayout from "@/Layouts/InstructorLayout";
 export default function ClassList({ classList }) {
     return (
         <InstructorLayout>
-            <div className="min-h-screen bg-gray-100 p-6">
-                <div className="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-semibold text-gray-800">
+            <div className="min-h-screen bg-white p-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-3xl font-bold text-indigo-800 tracking-tight">
                             Your Classes
                         </h2>
-                        <Link
-                            href={route("instructor.create")}
-                            className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                        >
-                            + Create New Class
-                        </Link>
                     </div>
 
                     {classList && classList.length > 0 ? (
-                        <ul className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                             {classList.map((cls) => (
-                                <li
+                                <Link
                                     key={cls.id}
-                                    className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition"
+                                    href={route(
+                                        "instructor.classroom.show",
+                                        cls.id
+                                    )}
+                                    className="group"
                                 >
-                                    <Link
-                                        href={route(
-                                            "instructor.classroom.show",
-                                            cls.id
+                                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col h-full transform transition duration-300 hover:-translate-y-1 hover:shadow-2xl border border-transparent hover:border-indigo-300">
+                                        {cls.photo && (
+                                            <div className="aspect-w-16 aspect-h-9 bg-gray-100 flex items-center justify-center">
+                                                <img
+                                                    src={`/class/${cls.photo}`}
+                                                    alt={cls.name}
+                                                    className="object-contain"
+                                                />
+                                            </div>
                                         )}
-                                        className="text-xl font-bold text-blue-700 hover:underline"
-                                    >
-                                        {cls.name}
-                                    </Link>
-                                    <p className="text-gray-600 mt-1">
-                                        {cls.description}
-                                    </p>
-                                </li>
+                                        <div className="p-5 flex flex-col flex-grow">
+                                            <h3 className="text-xl font-bold text-indigo-900 mb-1 truncate">
+                                                {cls.name}
+                                            </h3>
+                                            <p className="text-gray-600 text-sm mb-3 line-clamp-2 min-h-[2.5em]">
+                                                {cls.description ||
+                                                    "No description available."}
+                                            </p>
+                                            <div className="mt-auto space-y-1">
+                                                {cls.section && (
+                                                    <p className="text-sm text-gray-700">
+                                                        <span className="font-semibold text-indigo-700">
+                                                            Section:
+                                                        </span>{" "}
+                                                        {cls.section}
+                                                    </p>
+                                                )}
+                                                {cls.yearlevel && (
+                                                    <p className="text-sm text-gray-700">
+                                                        <span className="font-semibold text-indigo-700">
+                                                            Year:
+                                                        </span>{" "}
+                                                        {cls.yearlevel}
+                                                    </p>
+                                                )}
+                                                {cls.students_count !==
+                                                    undefined && (
+                                                    <p className="text-sm text-gray-700">
+                                                        <span className="font-semibold text-indigo-700">
+                                                            Students Enrolled:
+                                                        </span>{" "}
+                                                        {cls.students_count}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
                             ))}
-                        </ul>
+                        </div>
                     ) : (
-                        <p className="text-gray-500 italic">
-                            No classes yet. Click "Create New Class" to get
-                            started.
-                        </p>
+                        <div className="flex justify-center items-center h-64">
+                            <span className="text-lg text-gray-500">
+                                No classes yet. Click "Create New Class" to get
+                                started.
+                            </span>
+                        </div>
                     )}
                 </div>
             </div>
