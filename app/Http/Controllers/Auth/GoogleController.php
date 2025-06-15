@@ -49,6 +49,8 @@ class GoogleController extends Controller
             if ($user->role === 'admin') {
                 return redirect()->intended('/admin/dashboard');
 
+            } else if ($user->role === 'instructor') {
+                return redirect()->intended('/instructor/dashboard');
             }
 
             return redirect()->intended('/student/dashboard');
