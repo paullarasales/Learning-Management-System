@@ -225,7 +225,7 @@ export default function InstructorRegister() {
                     </form>
                     <div className="mt-6 text-center">
                         <a
-                            href={route("redirect.google")}
+                            href={route("google.instructor.redirect")}
                             className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                         >
                             <img

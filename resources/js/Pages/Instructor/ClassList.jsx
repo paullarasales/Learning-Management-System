@@ -10,6 +10,9 @@ export default function ClassList({ classList }) {
                         <h2 className="text-3xl font-bold text-indigo-800 tracking-tight">
                             Your Classes
                         </h2>
+                        <Link href={route("instructor.create")}>
+                            Create New
+                        </Link>
                     </div>
 
                     {classList && classList.length > 0 ? (

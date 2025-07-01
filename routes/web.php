@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\Auth\RegisterInstructorController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NotificationController;
@@ -20,6 +21,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/instructor/register', [RegisterInstructorController::class, 'create'])->name('instructor.create');
+Route::post('/instructor/register', [RegisterInstructorController::class, 'store'])->name('instructor.register');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
@@ -72,6 +76,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('redirect.google');
+Route::get('auth/google/redirect/instructor', [GoogleController::class, 'redirectToGoogleInstructor'])->name('google.instructor.redirect');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 require __DIR__.'/auth.php';
