@@ -71,6 +71,18 @@ export default function ClassList({ classList }) {
                                                     </p>
                                                 )}
                                             </div>
+
+                                            <div className="mt-3 text-right">
+                                                <Link
+                                                    href={route(
+                                                        "instructor.classroom.edit",
+                                                        cls.id
+                                                    )}
+                                                    className="text-sm text-indigo-600 hover:underline"
+                                                >
+                                                    Edit
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>

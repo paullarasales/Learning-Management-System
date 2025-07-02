@@ -91,8 +91,9 @@ class InstructorController extends Controller
         return redirect()->route('instructor.classList')->with('success', 'Classroom created successfully');
     }
 
-    public function edit(ClassModel $classModel)
+    public function edit($id)
     {
+        $classModel = ClassModel::where('id', $id)->where('instructor_id', auth()->id())->firstOrFail();
         return Inertia::render('Instructor/Edit', [
             'classModel' => $classModel,
         ]);
