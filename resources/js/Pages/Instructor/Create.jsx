@@ -18,7 +18,7 @@ export default function Create() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post("/classroom"); // might change later
+        post("/instructor/classes"); // might change later
         reset();
     };
 
@@ -110,10 +110,7 @@ export default function Create() {
                                         type="time"
                                         value={data.end_time}
                                         onChange={(e) =>
-                                            setData(
-                                                "start_time",
-                                                e.target.value
-                                            )
+                                            setData("end_time", e.target.value)
                                         }
                                         className="w-full border rounded p-2"
                                     />
@@ -175,7 +172,7 @@ export default function Create() {
                                 type="text"
                                 value={data.subcode}
                                 onChange={(e) =>
-                                    setData("description", e.target.value)
+                                    setData("subcode", e.target.value)
                                 }
                                 placeholder="Subject Code"
                                 className="w-full border rounded p-2"

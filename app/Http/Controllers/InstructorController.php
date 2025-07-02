@@ -70,14 +70,65 @@ class InstructorController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'subcode' => 'required|string|max:255',
-            'schedule' => 'required|string|max:255'
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'yearlevel' => 'required|int',
+            'section' => 'required|string|max:20'
         ]);
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->move(public_path('class'), $filename);
+            $data['photo'] = $filename;
+        }
 
         $data['instructor_id'] = auth()->id();
 
         ClassModel::create($data);
 
-        return response()->json(['message' => 'Classroom created successfully.']);
+        return redirect()->route('instructor.classList')->with('success', 'Classroom created successfully');
+    }
+
+    public function edit(ClassModel $classModel)
+    {
+        return Inertia::render('Instructor/Edit', [
+            'classModel' => $classModel,
+        ]);
+    }
+
+    public function updateClassroom(Request $request, ClassModel $classModel)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'subcode' => 'required|string|max:255',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'yearlevel' => 'required|int',
+            'section' => 'required|string|max:20'
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('class'), $filename);
+            $data['photo'] = $filename;
+        } else {
+            $data['photo'] = $classModel->photo;
+        }
+
+        $classModel->update($data);
+
+        return redirect()->route('instructor.classList')->with('success', 'Classroom updated successfully');
+    }
+
+    public function destroy(ClassModel $classModel)
+    {
+        $classModel->delete();
+        return redirect()->route('instructor.classList')->with('success', 'Classroom deleted successfully.');
     }
 
     public function show($id)

@@ -99,7 +99,6 @@ class AdminController extends Controller
             'section' => 'required|string|max:20'
         ]);
 
-
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = time() . '.' . $file->getClientOriginalExtension();
