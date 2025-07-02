@@ -21,8 +21,8 @@ export default function Edit({ classModel }) {
 
     return (
         <InstructorLayout>
-            <div className="h-form bg-white shadow-md rounded-mp p-5">
-                <h1 className="text-2xl font-semibold">Edit Class</h1>
+            <div className="h-form bg-white shadow-md rounded-md p-5">
+                <h1 className="text-2xl font-semibold" Edit Class></h1>
                 <form
                     onSubmit={handleSubmit}
                     encType="multipart/form-data"
@@ -37,9 +37,9 @@ export default function Edit({ classModel }) {
                             Save
                         </button>
                     </div>
-                    <div className="h-[500px] w-full flex gap-4 bg-red-500">
-                        <div className="h-[500px] w-1/2 p-4 flex flex-col gap-4 rounded bg-pink-100"></div>
-                        <div className="h-[500px] w-1/2 p-4 flex flex-col gap-4 rounded bg-yellow-100"></div>
+                    <div className="h-[500px] w-full flex gap-4">
+                        <div className="h-[500px] w-1/2 p-4 flex flex-col gap-4 rounded"></div>
+                        <div className="h-[500px] w-1/2 p-4 flex flex-col gap-4 rounded"></div>
                     </div>
                 </form>
             </div>

@@ -64,17 +64,17 @@ class InstructorController extends Controller
         return Inertia::render('Instructor/Create');
     }
 
-    public function store(Request $request)
+    public function storeClassroom(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
+            'description' => 'required|string|max:255',
             'subcode' => 'required|string|max:255',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
             'yearlevel' => 'required|int',
-            'section' => 'required|string|max:20'
+            'section' => 'required|string|max:25'
         ]);
 
         if ($request->hasFile('photo')) {
@@ -88,14 +88,16 @@ class InstructorController extends Controller
 
         ClassModel::create($data);
 
-        return redirect()->route('instructor.classList')->with('success', 'Classroom created successfully');
+        return redirect()->route('instructor.classList')->with('success', 'Classroom created successfully.');
     }
 
-    public function edit($id)
-    {
+    // HAI ANNA POLO I LOVE YOU!!!
+
+    public function edit($id){
         $classModel = ClassModel::where('id', $id)->where('instructor_id', auth()->id())->firstOrFail();
+
         return Inertia::render('Instructor/Edit', [
-            'classModel' => $classModel,
+            'classModel' => $classModel
         ]);
     }
 
@@ -103,27 +105,28 @@ class InstructorController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
+            'description' => 'required|string|max:255',
             'subcode' => 'required|string|max:255',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
             'yearlevel' => 'required|int',
-            'section' => 'required|string|max:20'
+            'section' => 'required|string|max:255',
         ]);
 
-        if ($request->hasFile('photo')) {
+        if ($request->hasFile('photo')){
             $file = $request->file('photo');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = time() . "." . $file->getClientOriginalExtension();
             $file->move(public_path('class'), $filename);
             $data['photo'] = $filename;
         } else {
+            // Keep the original photo
             $data['photo'] = $classModel->photo;
         }
 
         $classModel->update($data);
 
-        return redirect()->route('instructor.classList')->with('success', 'Classroom updated successfully');
+        return redirect()->route('instructor.classList')->with('success', 'Classroom updated successfully.');
     }
 
     public function destroy(ClassModel $classModel)
