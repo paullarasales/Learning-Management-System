@@ -22,6 +22,7 @@ export default {
                 form: "680px",
                 class: "800px",
                 container: "380px",
+                subcode: "64px",
             },
             width: {
                 container: "300px",
