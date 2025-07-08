@@ -58,7 +58,8 @@ Route::middleware(['auth', 'instructor'])->group(function () {
     Route::get('/instructor/class', [InstructorController::class, 'classList'])->name('instructor.classList');
     Route::get('/instructor/create-class', [InstructorController::class, 'create'])->name('instructor.create');
     Route::get('/instructor/{id}/editClass', [InstructorController::class, 'edit'])->name('instructor.classroom.edit');
-    Route::put('/instructor/{classModel}', [InstructorController::class, 'updateClassroom'])->name('classroom.update');
+    Route::put('/instructor/classroom/{id}', [InstructorController::class, 'updateClassroom'])->name('classroom.update');
+    Route::delete('/instructor/classroom/{id}', [InstructorController::class, 'destroy'])->name('classroom.destroy');
     Route::post('/instructor/classes', [InstructorController::class, 'store'])->name('instructor.classes.store');
     Route::get('/instructor/classroom/{id}', [InstructorController::class, 'show'])->name('instructor.classroom.show');
     Route::get('/instructor/profile', [InstructorController::class, 'showProfile'])->name('instructor.profile');

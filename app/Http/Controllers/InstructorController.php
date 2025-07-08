@@ -101,17 +101,22 @@ class InstructorController extends Controller
         ]);
     }
 
-    public function updateClassroom(Request $request, ClassModel $classModel)
+    public function updateClassroom(Request $request, $id)
     {
+        // dd($request->all());
+        $classModel = ClassModel::where('id', $id)
+                                ->where('instructor_id', auth()->id())
+                                ->firstOrFail();
+
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'subcode' => 'required|string|max:255',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
+            'name' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string|max:255',
+            'subcode' => 'sometimes|string|max:255',
+            'start_time' => 'nullable|date_format:H:i:s',
+            'end_time' => 'nullable|date_format:H:i:s|after:start_time',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-            'yearlevel' => 'required|int',
-            'section' => 'required|string|max:255',
+            'yearlevel' => 'sometimes|int',
+            'section' => 'sometimes|string|max:255',
         ]);
 
         if ($request->hasFile('photo')){
@@ -129,8 +134,10 @@ class InstructorController extends Controller
         return redirect()->route('instructor.classList')->with('success', 'Classroom updated successfully.');
     }
 
-    public function destroy(ClassModel $classModel)
+    public function destroy($id)
     {
+        $classModel = ClassModel::findOrFail($id);
+        // dd($classModel);
         $classModel->delete();
         return redirect()->route('instructor.classList')->with('success', 'Classroom deleted successfully.');
     }
