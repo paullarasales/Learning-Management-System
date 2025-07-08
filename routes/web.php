@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\Auth\RegisterInstructorController;
@@ -64,6 +65,7 @@ Route::middleware(['auth', 'instructor'])->group(function () {
     Route::get('/instructor/classroom/{id}', [InstructorController::class, 'show'])->name('instructor.classroom.show');
     Route::get('/instructor/profile', [InstructorController::class, 'showProfile'])->name('instructor.profile');
     Route::put('/instructor/profile', [InstructorController::class, 'update']);
+    Route::post('/quiz', [QuizController::class, 'store'])->name('quiz.store');
 });
 
 Route::post('/classroom/{classroom}/materials', [MaterialController::class, 'store'])->name('materials.store');

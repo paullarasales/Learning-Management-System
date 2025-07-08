@@ -9,6 +9,7 @@ export default function Classroom({
     classroom = { students: [] },
     students = [],
     initialThreads = [],
+    quizzes = [],
 }) {
     const { props } = usePage();
     const [activeTab, setActiveTab] = useState("threads");
@@ -17,6 +18,115 @@ export default function Classroom({
     const [gradingData, setGradingData] = useState({});
     const [assignmentTab, setAssignmentTab] = useState("ongoing");
     const [gradingAll, setGradingAll] = useState(false);
+    // Quiz state
+    const [questions, setQuestions] = useState([
+        {
+            question_text: "",
+            correct_choice: "A",
+            choices: [
+                { label: "A", text: "" },
+                { label: "B", text: "" },
+                { label: "C", text: "" },
+                { label: "D", text: "" },
+            ],
+        },
+    ]);
+    // Quizzes list state (for live update after creation)
+    const [quizList, setQuizList] = useState(quizzes);
+    const [selectedQuiz, setSelectedQuiz] = useState(null);
+
+    // Quiz form
+    const {
+        data: quizData,
+        setData: setQuizData,
+        post: postQuiz,
+        processing: quizProcessing,
+        reset: resetQuiz,
+        errors: quizErrors,
+    } = useForm({
+        class_id: classroom.id,
+        title: "",
+        description: "",
+        questions: questions,
+    });
+
+    // Quiz handlers
+    const handleQuizInputChange = (e) => {
+        setQuizData(e.target.name, e.target.value);
+    };
+
+    const handleQuestionChange = (idx, field, value) => {
+        const updated = [...questions];
+        updated[idx][field] = value;
+        setQuestions(updated);
+        setQuizData("questions", updated);
+    };
+
+    const handleChoiceChange = (qIdx, cIdx, value) => {
+        const updated = [...questions];
+        updated[qIdx].choices[cIdx].text = value;
+        setQuestions(updated);
+        setQuizData("questions", updated);
+    };
+
+    const handleCorrectChoiceChange = (qIdx, value) => {
+        const updated = [...questions];
+        updated[qIdx].correct_choice = value;
+        setQuestions(updated);
+        setQuizData("questions", updated);
+    };
+
+    const addQuestion = () => {
+        setQuestions([
+            ...questions,
+            {
+                question_text: "",
+                correct_choice: "A",
+                choices: [
+                    { label: "A", text: "" },
+                    { label: "B", text: "" },
+                    { label: "C", text: "" },
+                    { label: "D", text: "" },
+                ],
+            },
+        ]);
+    };
+
+    const removeQuestion = (idx) => {
+        if (questions.length === 1) return;
+        const updated = questions.filter((_, i) => i !== idx);
+        setQuestions(updated);
+        setQuizData("questions", updated);
+    };
+
+    const handleCreateQuiz = (e) => {
+        e.preventDefault();
+        postQuiz(route("quiz.store", classroom.id), {
+            onSuccess: (response) => {
+                resetQuiz();
+                setQuestions([
+                    {
+                        question_text: "",
+                        correct_choice: "A",
+                        choices: [
+                            { label: "A", text: "" },
+                            { label: "B", text: "" },
+                            { label: "C", text: "" },
+                            { label: "D", text: "" },
+                        ],
+                    },
+                ]);
+                // Add new quiz to the list if returned from backend
+                if (response && response.quiz) {
+                    setQuizList((prev) => [response.quiz, ...prev]);
+                }
+                toast.success("Quiz created successfully!");
+            },
+            onError: () => {
+                toast.error("Failed to create quiz. Please check your input.");
+            },
+        });
+    };
 
     // Update threads when props change
     useEffect(() => {
@@ -213,21 +323,25 @@ export default function Classroom({
 
                 {/* Tab Buttons */}
                 <div className="flex space-x-4 border-b mb-4">
-                    {["threads", "materials", "assignments", "members"].map(
-                        (tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`py-2 px-4 text-sm font-medium capitalize border-b-2 transition ${
-                                    activeTab === tab
-                                        ? "border-purple-600 text-purple-600"
-                                        : "border-transparent text-gray-500 hover:text-purple-600"
-                                }`}
-                            >
-                                {tab}
-                            </button>
-                        )
-                    )}
+                    {[
+                        "threads",
+                        "materials",
+                        "assignments",
+                        "quiz",
+                        "members",
+                    ].map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`py-2 px-4 text-sm font-medium capitalize border-b-2 transition ${
+                                activeTab === tab
+                                    ? "border-purple-600 text-purple-600"
+                                    : "border-transparent text-gray-500 hover:text-purple-600"
+                            }`}
+                        >
+                            {tab}
+                        </button>
+                    ))}
                 </div>
 
                 {/* Tab Content */}
@@ -831,6 +945,324 @@ export default function Classroom({
                                     </div>
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {activeTab === "quiz" && (
+                        <div className="max-w-2xl mx-auto">
+                            {/* List of quizzes */}
+                            <div className="mb-8">
+                                <h2 className="text-lg font-bold mb-2">
+                                    Existing Quizzes
+                                </h2>
+                                {quizList.length === 0 ? (
+                                    <div className="text-gray-500">
+                                        No quizzes yet.
+                                    </div>
+                                ) : (
+                                    <ul className="space-y-4">
+                                        {quizList.map((quiz) => (
+                                            <li
+                                                key={quiz.id}
+                                                className="border rounded p-4 bg-gray-50"
+                                            >
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <h3 className="font-semibold text-purple-700">
+                                                            {quiz.title}
+                                                        </h3>
+                                                        <p className="text-gray-600 text-sm mb-1">
+                                                            {quiz.description}
+                                                        </p>
+                                                        <span className="text-xs text-gray-500">
+                                                            {quiz.questions
+                                                                ?.length ||
+                                                                0}{" "}
+                                                            question(s)
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        className="px-4 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                                                        onClick={() =>
+                                                            setSelectedQuiz(
+                                                                quiz
+                                                            )
+                                                        }
+                                                    >
+                                                        View
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                                {/* Quiz Details Modal */}
+                                {selectedQuiz && (
+                                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+                                        <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6 relative animate-fade-in overflow-y-auto max-h-[90vh]">
+                                            <button
+                                                onClick={() =>
+                                                    setSelectedQuiz(null)
+                                                }
+                                                className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg"
+                                                title="Close"
+                                            >
+                                                ×
+                                            </button>
+                                            <h3 className="text-lg font-bold mb-2">
+                                                {selectedQuiz.title}
+                                            </h3>
+                                            <p className="mb-2 text-gray-700">
+                                                {selectedQuiz.description}
+                                            </p>
+                                            <h4 className="font-semibold mb-2">
+                                                Questions
+                                            </h4>
+                                            <ol className="mb-4 list-decimal pl-6">
+                                                {selectedQuiz.questions?.map(
+                                                    (q, idx) => (
+                                                        <li
+                                                            key={q.id || idx}
+                                                            className="mb-2"
+                                                        >
+                                                            <div className="font-medium">
+                                                                {
+                                                                    q.question_text
+                                                                }
+                                                            </div>
+                                                            <ul className="ml-4 mt-1">
+                                                                {q.choices?.map(
+                                                                    (
+                                                                        c,
+                                                                        cIdx
+                                                                    ) => (
+                                                                        <li
+                                                                            key={
+                                                                                c.id ||
+                                                                                cIdx
+                                                                            }
+                                                                            className={
+                                                                                q.correct_choice ===
+                                                                                c.label
+                                                                                    ? "text-green-600"
+                                                                                    : ""
+                                                                            }
+                                                                        >
+                                                                            <span className="font-semibold">
+                                                                                {
+                                                                                    c.label
+                                                                                }
+                                                                                .
+                                                                            </span>{" "}
+                                                                            {
+                                                                                c.text
+                                                                            }
+                                                                            {q.correct_choice ===
+                                                                                c.label && (
+                                                                                <span className="ml-2 text-xs text-green-600">
+                                                                                    (Correct)
+                                                                                </span>
+                                                                            )}
+                                                                        </li>
+                                                                    )
+                                                                )}
+                                                            </ul>
+                                                        </li>
+                                                    )
+                                                )}
+                                            </ol>
+                                            <h4 className="font-semibold mb-2">
+                                                Submissions
+                                            </h4>
+                                            {selectedQuiz.submissions &&
+                                            selectedQuiz.submissions.length >
+                                                0 ? (
+                                                <ul className="space-y-2">
+                                                    {selectedQuiz.submissions.map(
+                                                        (submission) => (
+                                                            <li
+                                                                key={
+                                                                    submission.id
+                                                                }
+                                                                className="border rounded p-3 flex justify-between items-center"
+                                                            >
+                                                                <div>
+                                                                    <span className="font-medium">
+                                                                        {submission
+                                                                            .student
+                                                                            ?.firstname ||
+                                                                            "Unknown Student"}
+                                                                    </span>
+                                                                </div>
+                                                                <div>
+                                                                    <span className="text-sm">
+                                                                        Score:{" "}
+                                                                        <span className="font-bold">
+                                                                            {submission.score ??
+                                                                                "-"}
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </li>
+                                                        )
+                                                    )}
+                                                </ul>
+                                            ) : (
+                                                <div className="text-gray-500">
+                                                    No submissions yet.
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            {/* Quiz creation form */}
+                            <form
+                                onSubmit={handleCreateQuiz}
+                                className="bg-white p-6 rounded shadow"
+                            >
+                                <h2 className="text-xl font-bold mb-4">
+                                    Create Quiz
+                                </h2>
+                                <div className="mb-4">
+                                    <label className="block font-semibold">
+                                        Title
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="title"
+                                        value={quizData.title}
+                                        onChange={handleQuizInputChange}
+                                        className="w-full border rounded px-3 py-2"
+                                        required
+                                    />
+                                    {quizErrors?.title && (
+                                        <div className="text-red-500 text-sm">
+                                            {quizErrors.title}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-semibold">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        name="description"
+                                        value={quizData.description}
+                                        onChange={handleQuizInputChange}
+                                        className="w-full border rounded px-3 py-2"
+                                    />
+                                    {quizErrors?.description && (
+                                        <div className="text-red-500 text-sm">
+                                            {quizErrors.description}
+                                        </div>
+                                    )}
+                                </div>
+                                {questions.map((q, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="mb-6 border p-4 rounded bg-gray-50"
+                                    >
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className="font-semibold">
+                                                Question {idx + 1}
+                                            </label>
+                                            {questions.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeQuestion(idx)
+                                                    }
+                                                    className="text-red-500 text-xs"
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="text"
+                                            placeholder="Question text"
+                                            value={q.question_text}
+                                            onChange={(e) =>
+                                                handleQuestionChange(
+                                                    idx,
+                                                    "question_text",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="w-full border rounded px-3 py-2 mb-2"
+                                            required
+                                        />
+                                        <div className="mb-2">
+                                            <label className="block font-semibold mb-1">
+                                                Choices
+                                            </label>
+                                            {q.choices.map((c, cIdx) => (
+                                                <div
+                                                    key={c.label}
+                                                    className="flex items-center mb-1"
+                                                >
+                                                    <span className="w-6">
+                                                        {c.label}.
+                                                    </span>
+                                                    <input
+                                                        type="text"
+                                                        placeholder={`Choice ${c.label}`}
+                                                        value={c.text}
+                                                        onChange={(e) =>
+                                                            handleChoiceChange(
+                                                                idx,
+                                                                cIdx,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="flex-1 border rounded px-2 py-1"
+                                                        required
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div>
+                                            <label className="block font-semibold">
+                                                Correct Answer
+                                            </label>
+                                            <select
+                                                value={q.correct_choice}
+                                                onChange={(e) =>
+                                                    handleCorrectChoiceChange(
+                                                        idx,
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="border rounded px-2 py-1"
+                                            >
+                                                <option value="A">A</option>
+                                                <option value="B">B</option>
+                                                <option value="C">C</option>
+                                                <option value="D">D</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={addQuestion}
+                                    className="mb-4 px-4 py-2 bg-green-500 text-white rounded"
+                                >
+                                    Add Question
+                                </button>
+                                <div>
+                                    <button
+                                        type="submit"
+                                        className="px-6 py-2 bg-blue-600 text-white rounded"
+                                        disabled={quizProcessing}
+                                    >
+                                        {quizProcessing
+                                            ? "Creating..."
+                                            : "Create Quiz"}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     )}
 

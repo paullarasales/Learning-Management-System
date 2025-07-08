@@ -13,6 +13,7 @@ use App\Models\Reply;
 use App\Models\Task;
 use App\Models\Assignment;
 use App\Models\ClassModel;
+use App\Models\Quiz;
 use Inertia\Inertia;
 
 class InstructorController extends Controller
@@ -160,12 +161,15 @@ class InstructorController extends Controller
           ->latest()
           ->get();
 
+        $quizzes = Quiz::with(['questions.choices'])->where('class_id', $id)->latest()->get();
+
         return Inertia::render('Instructor/Classroom', [
             'classroom' => $classroom,
             'students' => $students,
             'initialThreads' => $threads,
             'materials' => $materials,
             'assignments' => $assignments,
+            'quizzes' => $quizzes,
         ]);
     }
 
