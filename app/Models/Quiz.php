@@ -10,6 +10,9 @@ class Quiz extends Model
         'class_id',
         'title',
         'description',
+        'start_time',
+        'end_time',
+        'duration_minutes',
     ];
 
     public function questions()

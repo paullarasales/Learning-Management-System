@@ -16,6 +16,9 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'questions' => 'required|array|min:1',
+            'start_time' => 'nullable|date',
+            'end_time' => 'nullable|date|after_or_equal:start_time',
+            'duration_minutes' => 'nullable|integer|min:1',
             'questions.*.question_text' => 'required|string',
             'questions.*.correct_choice' => 'required|in:A,B,C,D',
             'questions.*.choices' => 'required|array|size:4',
@@ -26,7 +29,10 @@ class QuizController extends Controller
         $quiz = Quiz::create([
             'class_id' => $validated['class_id'],
             'title' => $validated['title'],
-            'description' => $validated['description']
+            'description' => $validated['description'],
+            'start_time' => $validated['start_time'] ?? null,
+            'end_time' => $validated['end_time'] ?? null,
+            'duration_minutes' => $validated['duration_minutes']
         ]);
 
         forEach ($validated['questions'] as $q) {
@@ -36,6 +42,12 @@ class QuizController extends Controller
             ]);
 
             $question->choices()->createMany($q['choices']);
+        }
+
+        $quiz->load('questions.choices');
+
+        if ($request->wantsJson()) {
+            return response()->json(['quiz' => $quiz]);
         }
 
         return back()->with('success', 'Quiz created');

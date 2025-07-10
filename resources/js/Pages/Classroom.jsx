@@ -2,7 +2,11 @@ import { useForm, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState, useEffect } from "react";
 
-export default function Classroom({ classroom = {}, initialThreads = [] }) {
+export default function Classroom({
+    classroom = {},
+    initialThreads = [],
+    quizzes = [],
+}) {
     const { props } = usePage();
     const [activeTab, setActiveTab] = useState("threads");
     const [threads, setThreads] = useState(initialThreads);
@@ -101,23 +105,26 @@ export default function Classroom({ classroom = {}, initialThreads = [] }) {
 
                 {/* Tabs */}
                 <div className="flex space-x-6 mb-4 border-b">
-                    {["threads", "materials", "assignments"].map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`py-2 px-4 text-sm font-semibold border-b-2 ${
-                                activeTab === tab
-                                    ? "border-purple-600 text-purple-600"
-                                    : "border-transparent text-gray-500 hover:text-purple-600"
-                            }`}
-                        >
-                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        </button>
-                    ))}
+                    {["threads", "materials", "assignments", "quiz"].map(
+                        (tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`py-2 px-4 text-sm font-semibold border-b-2 ${
+                                    activeTab === tab
+                                        ? "border-purple-600 text-purple-600"
+                                        : "border-transparent text-gray-500 hover:text-purple-600"
+                                }`}
+                            >
+                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                            </button>
+                        )
+                    )}
                 </div>
 
                 {/* Tab Content */}
                 <div className="mt-4 space-y-6">
+                    {activeTab === "quiz" && <div></div>}
                     {activeTab === "threads" && (
                         <>
                             {/* Create Thread */}

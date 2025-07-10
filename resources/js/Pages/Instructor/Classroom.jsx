@@ -18,7 +18,8 @@ export default function Classroom({
     const [gradingData, setGradingData] = useState({});
     const [assignmentTab, setAssignmentTab] = useState("ongoing");
     const [gradingAll, setGradingAll] = useState(false);
-    // Quiz state
+    const [quizList, setQuizList] = useState(quizzes);
+    const [selectedQuiz, setSelectedQuiz] = useState(null);
     const [questions, setQuestions] = useState([
         {
             question_text: "",
@@ -31,9 +32,6 @@ export default function Classroom({
             ],
         },
     ]);
-    // Quizzes list state (for live update after creation)
-    const [quizList, setQuizList] = useState(quizzes);
-    const [selectedQuiz, setSelectedQuiz] = useState(null);
 
     // Quiz form
     const {
@@ -47,8 +45,15 @@ export default function Classroom({
         class_id: classroom.id,
         title: "",
         description: "",
+        start_time: "",
+        end_time: "",
+        duration_minutes: "",
         questions: questions,
     });
+
+    useEffect(() => {
+        setQuizList(quizzes);
+    }, [quizzes]);
 
     // Quiz handlers
     const handleQuizInputChange = (e) => {
@@ -102,7 +107,7 @@ export default function Classroom({
     const handleCreateQuiz = (e) => {
         e.preventDefault();
         postQuiz(route("quiz.store", classroom.id), {
-            onSuccess: (response) => {
+            onSuccess: (...args) => {
                 resetQuiz();
                 setQuestions([
                     {
@@ -116,11 +121,8 @@ export default function Classroom({
                         ],
                     },
                 ]);
-                // Add new quiz to the list if returned from backend
-                if (response && response.quiz) {
-                    setQuizList((prev) => [response.quiz, ...prev]);
-                }
-                toast.success("Quiz created successfully!");
+                router.reload({ only: ["quizzes"] });
+                toast.success("Quiz created successfully.");
             },
             onError: () => {
                 toast.error("Failed to create quiz. Please check your input.");
@@ -128,7 +130,6 @@ export default function Classroom({
         });
     };
 
-    // Update threads when props change
     useEffect(() => {
         setThreads(props.initialThreads || []);
     }, [props.initialThreads]);
@@ -950,7 +951,6 @@ export default function Classroom({
 
                     {activeTab === "quiz" && (
                         <div className="max-w-2xl mx-auto">
-                            {/* List of quizzes */}
                             <div className="mb-8">
                                 <h2 className="text-lg font-bold mb-2">
                                     Existing Quizzes
@@ -967,36 +967,30 @@ export default function Classroom({
                                                 className="border rounded p-4 bg-gray-50"
                                             >
                                                 <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <h3 className="font-semibold text-purple-700">
-                                                            {quiz.title}
-                                                        </h3>
-                                                        <p className="text-gray-600 text-sm mb-1">
-                                                            {quiz.description}
-                                                        </p>
-                                                        <span className="text-xs text-gray-500">
-                                                            {quiz.questions
-                                                                ?.length ||
-                                                                0}{" "}
-                                                            question(s)
-                                                        </span>
+                                                    <div className="font-semibold text-purple-700">
+                                                        <h3>{quiz.title}</h3>
                                                     </div>
-                                                    <button
-                                                        className="px-4 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-                                                        onClick={() =>
-                                                            setSelectedQuiz(
-                                                                quiz
-                                                            )
-                                                        }
-                                                    >
-                                                        View
-                                                    </button>
+                                                    <p className="text-gray-500 text-sm mb-1">
+                                                        {quiz.description}
+                                                    </p>
+                                                    <span className="text-xs text-gray-500">
+                                                        {quiz.questions
+                                                            ?.length || 0}{" "}
+                                                        question(s)
+                                                    </span>
                                                 </div>
+                                                <button
+                                                    className="px-4 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                                                    onClick={() =>
+                                                        setSelectedQuiz(quiz)
+                                                    }
+                                                >
+                                                    View
+                                                </button>
                                             </li>
                                         ))}
                                     </ul>
                                 )}
-                                {/* Quiz Details Modal */}
                                 {selectedQuiz && (
                                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
                                         <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6 relative animate-fade-in overflow-y-auto max-h-[90vh]">
@@ -1004,10 +998,9 @@ export default function Classroom({
                                                 onClick={() =>
                                                     setSelectedQuiz(null)
                                                 }
-                                                className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg"
-                                                title="Close"
+                                                className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-lg"
                                             >
-                                                ×
+                                                x
                                             </button>
                                             <h3 className="text-lg font-bold mb-2">
                                                 {selectedQuiz.title}
@@ -1015,7 +1008,7 @@ export default function Classroom({
                                             <p className="mb-2 text-gray-700">
                                                 {selectedQuiz.description}
                                             </p>
-                                            <h4 className="font-semibold mb-2">
+                                            <h4 className="mb-4 list-decimal pl-6">
                                                 Questions
                                             </h4>
                                             <ol className="mb-4 list-decimal pl-6">
@@ -1051,9 +1044,9 @@ export default function Classroom({
                                                                             <span className="font-semibold">
                                                                                 {
                                                                                     c.label
-                                                                                }
+                                                                                }{" "}
                                                                                 .
-                                                                            </span>{" "}
+                                                                            </span>
                                                                             {
                                                                                 c.text
                                                                             }
@@ -1084,10 +1077,10 @@ export default function Classroom({
                                                                 key={
                                                                     submission.id
                                                                 }
-                                                                className="border rounded p-3 flex justify-between items-center"
+                                                                className="border rounded p-3 flex justify-between items-center "
                                                             >
                                                                 <div>
-                                                                    <span className="font-medium">
+                                                                    <span>
                                                                         {submission
                                                                             .student
                                                                             ?.firstname ||
@@ -1116,12 +1109,11 @@ export default function Classroom({
                                     </div>
                                 )}
                             </div>
-                            {/* Quiz creation form */}
                             <form
                                 onSubmit={handleCreateQuiz}
                                 className="bg-white p-6 rounded shadow"
                             >
-                                <h2 className="text-xl font-bold mb-4">
+                                <h2 className="text-xl font-semibold">
                                     Create Quiz
                                 </h2>
                                 <div className="mb-4">
@@ -1142,7 +1134,7 @@ export default function Classroom({
                                         </div>
                                     )}
                                 </div>
-                                <div className="mb-4">
+                                <div clasName="mb-4">
                                     <label className="block font-semibold">
                                         Description
                                     </label>
@@ -1155,6 +1147,57 @@ export default function Classroom({
                                     {quizErrors?.description && (
                                         <div className="text-red-500 text-sm">
                                             {quizErrors.description}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-semibold">
+                                        Start Time
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        name="start_time"
+                                        value={quizData.start_time}
+                                        onChange={handleQuizInputChange}
+                                        className="w-full border rounded px-3 py-2"
+                                    />
+                                    {quizErrors?.start_time && (
+                                        <div className="text-red-500 text-xs">
+                                            {quizErrors.start_time}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-semibold">
+                                        End Time
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        name="end_time"
+                                        value={quizData.end_time}
+                                        onChange={handleQuizInputChange}
+                                        className="w-full border rounded px-3 py-2"
+                                    />
+                                    {quizErrors?.end_time && (
+                                        <div className="text-red-500 text-xs">
+                                            {quizErrors.end_time}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-semibold">
+                                        Duration
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="duration_minutes"
+                                        value={quizData.duration_minutes}
+                                        onChange={handleQuizInputChange}
+                                        className="w-full border rounded px-3 py-2"
+                                    />
+                                    {quizErrors?.duration_minutes && (
+                                        <div className="text-red-500 text-xs">
+                                            {quizErrors.duration_minutes}
                                         </div>
                                     )}
                                 </div>
@@ -1203,7 +1246,7 @@ export default function Classroom({
                                                     className="flex items-center mb-1"
                                                 >
                                                     <span className="w-6">
-                                                        {c.label}.
+                                                        {c.label}
                                                     </span>
                                                     <input
                                                         type="text"
@@ -1258,7 +1301,7 @@ export default function Classroom({
                                         disabled={quizProcessing}
                                     >
                                         {quizProcessing
-                                            ? "Creating..."
+                                            ? "Creating"
                                             : "Create Quiz"}
                                     </button>
                                 </div>

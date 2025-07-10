@@ -53,7 +53,7 @@ class GoogleController extends Controller
             return match($user->role) {
                 'admin' => redirect()->intended('/admin/dashboard'),
                 'instructor' => redirect()->intended('/instructor/dashboard'),
-                'default' => redirect()->intended('/student/dashboard'),
+                'student' => redirect()->intended('/student/dashboard'),
             };
 
         } catch (\Exception $e) {

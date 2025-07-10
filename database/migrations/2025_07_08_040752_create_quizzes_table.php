@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('class_id')->constrained('classes')->onDelete('cascade');
             $table->string('title');
             $table->string('description')->nullable();
+            $table->timestamp('start_time')->nullable();
+            $table->timestamp('end_time')->nullable();
+            $table->integer('duration_minutes');
             $table->timestamps();
         });
     }

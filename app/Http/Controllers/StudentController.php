@@ -12,6 +12,7 @@ use App\Models\Material;
 use App\Models\Assignment;
 use App\Models\ClassModel;
 use App\Models\Submission;
+use App\Models\Quiz;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
@@ -96,6 +97,11 @@ class StudentController extends Controller
                                     ->where('student_id', auth()->id())
                                     ->get();
 
+        $quizzes = Quiz::with('questions.choices')
+                        ->where('class_id', $id)
+                        ->latest()
+                        ->get();
+
         // Return data to the frontend
         return Inertia::render('Classroom', [
             'classroom' => $classroom,
@@ -103,6 +109,7 @@ class StudentController extends Controller
             'materials' => $materials, // Pass the materials to the frontend
             'assignments' => $assignments,
             'submissions' => $submissions,
+            'quizzes' => $quizzes,
         ]);
     }
 
