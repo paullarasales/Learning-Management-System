@@ -13,6 +13,7 @@ use App\Models\Reply;
 use App\Models\Task;
 use App\Models\Assignment;
 use App\Models\ClassModel;
+use App\Models\QuizSubmission;
 use App\Models\Quiz;
 use Inertia\Inertia;
 
@@ -28,7 +29,7 @@ class InstructorController extends Controller
 
         $tasks = Task::where('user_id', $instructor->id)->take(5)->get();
         $myClasses = ClassModel::where('instructor_id', $instructor->id)->take(5)->get();
-        $myStudent = ClassModel::where('instructor_id', $instructor->id)
+        $myStudents = ClassModel::where('instructor_id', $instructor->id)
             ->with('students')
             ->get()
             ->pluck('students')
@@ -36,13 +37,14 @@ class InstructorController extends Controller
             ->unique('id')
             ->values();
 
-        // dd($myStudent);
+
+        // dd($myStudents);
         // dd($myClasses);
 
         return Inertia::render('Instructor/Dashboard', [
                 'tasks' => $tasks,
                 'myClasses' => $myClasses,
-                'myStudent' => $myStudent
+                'myStudents' => $myStudents
             ]
         );
     }
@@ -161,7 +163,13 @@ class InstructorController extends Controller
           ->latest()
           ->get();
 
-        $quizzes = Quiz::with(['questions.choices'])->where('class_id', $id)->latest()->get();
+        $quizzes = Quiz::with(['questions.choices', 'submissions.student'])->where('class_id', $id)->latest()->get();
+
+        // dd($quizzes);
+
+        $submissions = QuizSubmission::with(['student'])->get();
+
+        // dd($submissions);
 
         return Inertia::render('Instructor/Classroom', [
             'classroom' => $classroom,
@@ -170,8 +178,10 @@ class InstructorController extends Controller
             'materials' => $materials,
             'assignments' => $assignments,
             'quizzes' => $quizzes,
+            'submissions' => $submissions,
         ]);
     }
+
 
 
     public function addStudent(Request $request, $id)

@@ -7,11 +7,13 @@ import { FaUserGraduate, FaChalkboardTeacher, FaTasks } from "react-icons/fa";
 
 export default function Dashboard({
     tasks = [],
-    myStudent = [],
+    myStudents = [],
     myClasses = [],
 }) {
     const [date, setDate] = useState(new Date());
     const user = usePage().props.auth.user;
+
+    console.log("Student:", myStudents);
 
     const formatTime12Hour = (timeStr) => {
         const [hour, minute] = timeStr.split(":");
@@ -36,7 +38,7 @@ export default function Dashboard({
                             <div className="bg-white/80 backdrop-blur rounded-3xl shadow-lg p-8 flex flex-col items-center border border-blue-200 hover:shadow-2xl transition-all">
                                 <FaUserGraduate className="text-blue-500 text-5xl mb-3 drop-shadow" />
                                 <div className="text-4xl font-extrabold text-gray-800 mb-1">
-                                    {myStudent.length}
+                                    {myStudents.length}
                                 </div>
                                 <div className="text-blue-600 text-lg font-semibold tracking-wide uppercase">
                                     Students
@@ -71,29 +73,20 @@ export default function Dashboard({
                                     My Students
                                 </h2>
                                 <ul className="space-y-3 text-gray-700 text-base max-h-56 overflow-y-auto">
-                                    {myStudent.length > 0 ? (
-                                        myStudent.map((student) => (
-                                            <li
-                                                key={student.id}
-                                                className="flex items-center gap-3 rounded-xl px-3 py-2 bg-blue-50/60 hover:bg-blue-100 transition-colors shadow-sm"
-                                            >
-                                                <div className="w-9 h-9 rounded-full bg-blue-200 flex items-center justify-center font-bold text-blue-700 text-lg">
-                                                    {student.firstname.charAt(
-                                                        0
-                                                    )}
-                                                    {student.lastname.charAt(0)}
-                                                </div>
-                                                <span className="font-medium">
-                                                    {student.firstname}{" "}
-                                                    {student.lastname}
-                                                </span>
-                                            </li>
-                                        ))
-                                    ) : (
-                                        <li className="italic text-gray-400">
-                                            No students found.
+                                    {myStudents.map((student) => (
+                                        <li
+                                            key={student.id}
+                                            className="bg-blue-50 p-3 rounded-xl shadow-sm"
+                                        >
+                                            <div className="font-semibold">
+                                                {student.firstname}{" "}
+                                                {student.lastname}
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                {student.email}
+                                            </div>
                                         </li>
-                                    )}
+                                    ))}
                                 </ul>
                             </div>
 

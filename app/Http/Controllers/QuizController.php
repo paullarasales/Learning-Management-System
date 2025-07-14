@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Quiz;
 use App\Models\Question;
 use App\Models\Choice;
+use App\Models\QuizSubmission;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
@@ -51,5 +52,55 @@ class QuizController extends Controller
         }
 
         return back()->with('success', 'Quiz created');
+    }
+
+    public function submit(Request $request, Quiz $quiz)
+    {
+        // dd($request->all());
+
+        $existing = QuizSubmission::where('quiz_id', $quiz->id)
+            ->where('student_id', auth()->id())
+            ->where('status', 'finished')
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'message' => 'You have already finished the quiz.',
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'answers' => 'required|array',
+            'answers.*' => 'required|in:A,B,C,D',
+        ]);
+
+        $questions = $quiz->questions()->with('choices')->get();
+
+        $correctCount = 0;
+
+        foreach ($questions as $question) {
+            $studentAnswer = $validated['answers'][$question->id] ?? null;
+            if ($studentAnswer === $question->correct_choice) {
+                $correctCount++;
+            }
+        }
+
+        $score = $correctCount;
+
+        $submissions = QuizSubmission::create([
+            'quiz_id' => $quiz->id,
+            'student_id' => auth()->id(),
+            'answers' => json_encode($validated['answers']),
+            'score' => $score,
+            'status' => 'finished',
+        ]);
+
+        // return response()->json([
+        //     'message' => 'Quiz submitted successfully.',
+        //     'score' => $score,
+        //     'total' => $questions->count(),
+        // ]);
+
+        return back()->with('success', 'Quiz submitted successfully!');
     }
 }

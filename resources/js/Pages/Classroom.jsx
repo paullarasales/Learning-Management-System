@@ -1,4 +1,4 @@
-import { useForm, usePage } from "@inertiajs/react";
+import { useForm, usePage, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState, useEffect } from "react";
 
@@ -6,6 +6,7 @@ export default function Classroom({
     classroom = {},
     initialThreads = [],
     quizzes = [],
+    quizSubmissions = [],
 }) {
     const { props } = usePage();
     const [activeTab, setActiveTab] = useState("threads");
@@ -17,6 +18,27 @@ export default function Classroom({
     const { submissions = [] } = usePage().props;
     const [assignmentTab, setAssignmentTab] = useState("ongoing");
     const [submissionsState, setSubmissionsState] = useState(submissions);
+    const [quizList, setQuizList] = useState(quizzes);
+    const [selectedQuiz, setSelectedQuiz] = useState(null);
+    const [studentAnswers, setStudentAnswers] = useState({});
+    const [finishedQuizIds, setFinishQuizIds] = useState(
+        quizSubmissions
+            ? quizSubmissions
+                  .filter((sub) => sub.status === "finished" && sub.quiz_id)
+                  .map((sub) => sub.quiz_id)
+            : []
+    );
+    const [timeLeft, setTimeLeft] = useState(null);
+
+    // console.log("quiz submissions, ".quizSubmissions);
+    // console.log("quizSubmissions:", quizSubmissions);
+    console.log(
+        "finishedQuizIds",
+        quizSubmissions.map((sub) => sub.quiz_id)
+    );
+
+    // console.log(count(quizzes.question));
+    console.count(quizzes.questions);
 
     const now = new Date();
 
@@ -90,6 +112,79 @@ export default function Classroom({
         setReplyData({ thread_id: threadId, message: "" });
     };
 
+    const handleSubmitAnswers = () => {
+        if (!selectedQuiz) return;
+
+        router.post(
+            route("quiz.submit", selectedQuiz.id),
+            { answers: studentAnswers },
+            {
+                onSuccess: (page) => {
+                    // const { score, total } = page.props;
+                    // alert(
+                    //     `You got ${score} out of ${total} correct! (${(
+                    //         (score / total) *
+                    //         100
+                    //     ).toFixed(1)})`
+                    // );
+                    setFinishQuizIds((prev) => [...prev, selectedQuiz.id]);
+                    setSelectedQuiz(null);
+                    setStudentAnswers({});
+                },
+                onError: (errors) => {
+                    console.errors("Submission failed:", errors);
+                    alert("There was an error submitting your quiz.");
+                },
+            }
+        );
+    };
+
+    const handleOpenQuiz = (quiz) => {
+        setSelectedQuiz(quiz);
+
+        // initialize all answers to null or empty string
+        const initialAnswers = {};
+        quiz.questions.forEach((q) => {
+            initialAnswers[q.id] = null; // or ""
+        });
+        setStudentAnswers(initialAnswers);
+    };
+
+    const handleSelectChoice = (questionId, choiceLabel) => {
+        setStudentAnswers((prev) => ({
+            ...prev,
+            [questionId]: choiceLabel,
+        }));
+    };
+
+    useEffect(() => {
+        if (selectedQuiz) {
+            const duration = selectedQuiz.duration_minutes * 60;
+            setTimeLeft(duration);
+
+            const timer = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timer);
+                        handleSubmitAnswers();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+
+            return () => clearInterval(timer);
+        }
+    }, [selectedQuiz]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, "0");
+        const s = (seconds % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+    };
+
     return (
         <AuthenticatedLayout>
             <div className="px-4 py-6 min-h-screen">
@@ -124,7 +219,177 @@ export default function Classroom({
 
                 {/* Tab Content */}
                 <div className="mt-4 space-y-6">
-                    {activeTab === "quiz" && <div></div>}
+                    {activeTab === "quiz" && (
+                        <div className="max-w-2xl mx-auto">
+                            <h2 className="text-lg font-bold mb-2">
+                                Existing Quizzes
+                            </h2>
+                            {quizList.length === 0 ? (
+                                <div className="text-gray-500">
+                                    No quizzes yet.
+                                </div>
+                            ) : (
+                                <ul className="space-y-4">
+                                    {quizList.map((quiz) => {
+                                        const isFinished =
+                                            finishedQuizIds.includes(quiz.id);
+                                        const quesCount = quiz.questions.length;
+                                        return (
+                                            <li
+                                                key={quiz.id}
+                                                className="border rounded p-4 bg-gray-50"
+                                            >
+                                                <div className="flex justify-between items-center">
+                                                    <div className="font-semibold text-purple-700">
+                                                        <h3>{quiz.title}</h3>
+                                                    </div>
+                                                    <p className="text-gray-500 text-sm mb-1">
+                                                        {quiz.description}
+                                                    </p>
+                                                </div>
+                                                {quizSubmissions
+                                                    .filter(
+                                                        (sub) =>
+                                                            sub.quiz_id ===
+                                                            quiz.id
+                                                    )
+                                                    .map((sub) => (
+                                                        <h1
+                                                            key={sub.id}
+                                                            className="text-green-700 font-semibold"
+                                                        >
+                                                            Score: {sub.score}{" "}
+                                                            <span className="text-black">
+                                                                /{" "}
+                                                                {`${quesCount}`}
+                                                            </span>
+                                                        </h1>
+                                                    ))}
+                                                <button
+                                                    className={`px-4 py-1 rounded text-md ${
+                                                        isFinished
+                                                            ? "bg-gray-400 cursor-not-allowed"
+                                                            : "bg-blue-500 text-white"
+                                                    }`}
+                                                    onClick={() =>
+                                                        !isFinished &&
+                                                        setSelectedQuiz(quiz)
+                                                    }
+                                                    disabled={isFinished}
+                                                >
+                                                    {isFinished
+                                                        ? "Already Finished"
+                                                        : "Open"}
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            )}
+                            {selectedQuiz && (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                                    <div className="bg-white p-6 rounded-lg max-w-2xl w-full shadow-lg overflow-y-auto max-h-[90vh]">
+                                        <button
+                                            className="absolute top-4 right-4 text-gray-600 hover:text-red-500"
+                                            onClick={() => {
+                                                setSelectedQuiz(null);
+                                                setStudentAnswers({});
+                                            }}
+                                        >
+                                            ✕
+                                        </button>
+                                        <h2 className="text-xl font-bold text-purple-700 mb-4">
+                                            {selectedQuiz.title}
+                                        </h2>
+
+                                        {timeLeft !== null && (
+                                            <div className="mb-4 text-lg font-semibold text-red-600">
+                                                Time Remaining:{" "}
+                                                {formatTime(timeLeft)}
+                                            </div>
+                                        )}
+
+                                        <form
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                handleSubmitAnswers();
+                                            }}
+                                            className="space-y-6"
+                                        >
+                                            {selectedQuiz.questions.map(
+                                                (question) => (
+                                                    <div key={question.id}>
+                                                        <p>
+                                                            {
+                                                                question.question_text
+                                                            }
+                                                        </p>
+                                                        {question.choices.map(
+                                                            (choice) => (
+                                                                <label
+                                                                    key={
+                                                                        choice.label
+                                                                    }
+                                                                >
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={`question_${question.id}`}
+                                                                        value={
+                                                                            choice.label
+                                                                        }
+                                                                        checked={
+                                                                            studentAnswers[
+                                                                                question
+                                                                                    .id
+                                                                            ] ===
+                                                                            choice.label
+                                                                        }
+                                                                        onChange={() =>
+                                                                            handleSelectChoice(
+                                                                                question.id,
+                                                                                choice.label
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                    {
+                                                                        choice.label
+                                                                    }
+                                                                    .{" "}
+                                                                    {
+                                                                        choice.text
+                                                                    }
+                                                                </label>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                )
+                                            )}
+
+                                            <button
+                                                type="submit"
+                                                className={`bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded ${
+                                                    finishedQuizIds.includes(
+                                                        selectedQuiz.id
+                                                    )
+                                                        ? "bg-gray-400 cursor-not-allowed"
+                                                        : ""
+                                                }`}
+                                                disabled={finishedQuizIds.includes(
+                                                    selectedQuiz.id
+                                                )}
+                                            >
+                                                {finishedQuizIds.includes(
+                                                    selectedQuiz.id
+                                                )
+                                                    ? "Already Finished"
+                                                    : "Submit Quiz"}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                     {activeTab === "threads" && (
                         <>
                             {/* Create Thread */}

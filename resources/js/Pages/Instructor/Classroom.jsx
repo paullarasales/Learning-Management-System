@@ -10,6 +10,7 @@ export default function Classroom({
     students = [],
     initialThreads = [],
     quizzes = [],
+    submissions = [],
 }) {
     const { props } = usePage();
     const [activeTab, setActiveTab] = useState("threads");
@@ -32,6 +33,8 @@ export default function Classroom({
             ],
         },
     ]);
+
+    console.log("Submissions:", submissions);
 
     // Quiz form
     const {
@@ -1092,7 +1095,12 @@ export default function Classroom({
                                                                         Score:{" "}
                                                                         <span className="font-bold">
                                                                             {submission.score ??
-                                                                                "-"}
+                                                                                "-"}{" "}
+                                                                            /{" "}
+                                                                            {selectedQuiz
+                                                                                .questions
+                                                                                ?.length ||
+                                                                                0}
                                                                         </span>
                                                                     </span>
                                                                 </div>

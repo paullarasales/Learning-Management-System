@@ -35,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/student/notifications', [NotificationController::class, 'notification'])->name('student.notifications');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/quizzes/{quiz}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
