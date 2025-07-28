@@ -10,7 +10,8 @@ class VideoCall extends Model
         'host_id',
         'room_id',
         'host_peer_id',
-        'status'
+        'status',
+        'classroom_id'
     ];
 
     public function host()
@@ -21,5 +22,10 @@ class VideoCall extends Model
     public function participants()
     {
         return $this->belongsToMany(User::class, 'video_call_participants');
+    }
+
+    public function classroom()
+    {
+        return $this->belongsTo(ClassModel::class, 'classroom_id');
     }
 }

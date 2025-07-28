@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterInstructorController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\VideoCallController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -62,7 +63,7 @@ Route::middleware(['auth', 'instructor'])->group(function () {
     Route::get('/instructor/{id}/editClass', [InstructorController::class, 'edit'])->name('instructor.classroom.edit');
     Route::put('/instructor/classroom/{id}', [InstructorController::class, 'updateClassroom'])->name('classroom.update');
     Route::delete('/instructor/classroom/{id}', [InstructorController::class, 'destroy'])->name('classroom.destroy');
-    Route::post('/instructor/classes', [InstructorController::class, 'store'])->name('instructor.classes.store');
+    Route::post('/instructor/classes', [InstructorController::class, 'storeClassroom'])->name('instructor.classes.store');
     Route::get('/instructor/classroom/{id}', [InstructorController::class, 'show'])->name('instructor.classroom.show');
     Route::get('/instructor/profile', [InstructorController::class, 'showProfile'])->name('instructor.profile');
     Route::put('/instructor/profile', [InstructorController::class, 'update']);
@@ -84,5 +85,14 @@ Route::middleware('auth')->group(function () {
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('redirect.google');
 Route::get('auth/google/redirect/instructor', [GoogleController::class, 'redirectToGoogleInstructor'])->name('google.instructor.redirect');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::get('/video-call/{classroom}/start', [VideoCallController::class, 'start'])->name('video.call.start');
+Route::post('/video-call/{id}/join', [VideoCallController::class, 'join'])->name('video.call.join');
+Route::post('/video-call/{id}/end', [VideoCallController::class, 'end'])->name('video.call.end');
+Route::get('/video-call/{videoCall}', [VideoCallController::class, 'show'])->name('video.call.show');
+Route::get('/video-call/check/{classroom}', [VideoCallController::class, 'check']);
+Route::get('/video-call/{id}/participants', [VideoCallController::class, 'participants']);
+Route::post('/video-call/{id}/register-peer', [VideoCallController::class, 'registerPeer']);
+Route::post('/video-call/{id}/leave', [VideoCallController::class, 'leave']);
 
 require __DIR__.'/auth.php';

@@ -1,4 +1,4 @@
-import { useForm, usePage, router } from "@inertiajs/react";
+import { useForm, usePage, router, Link } from "@inertiajs/react";
 import InstructorLayout from "@/Layouts/InstructorLayout";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -35,6 +35,7 @@ export default function Classroom({
     ]);
 
     console.log("Submissions:", submissions);
+    console.log("Current User:", props.firstname);
 
     // Quiz form
     const {
@@ -316,13 +317,13 @@ export default function Classroom({
                         </p>
                     </div>
 
-                    <a
-                        href="#"
+                    <Link
+                        href={route("video.call.start", classroom.id)}
                         title="Start Video Call"
                         className="text-purple-600 hover:text-purple-800 text-3xl p-2 rounded-full transition"
                     >
                         <FiVideo />
-                    </a>
+                    </Link>
                 </div>
 
                 {/* Tab Buttons */}
@@ -953,7 +954,7 @@ export default function Classroom({
                     )}
 
                     {activeTab === "quiz" && (
-                        <div className="max-w-2xl mx-auto">
+                        <div className="max-w-2xl mx-auto bg-red-500">
                             <div className="mb-8">
                                 <h2 className="text-lg font-bold mb-2">
                                     Existing Quizzes

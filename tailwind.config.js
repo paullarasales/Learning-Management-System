@@ -23,6 +23,7 @@ export default {
                 class: "800px",
                 container: "380px",
                 subcode: "64px",
+                card: "120px",
             },
             width: {
                 container: "300px",

@@ -8,7 +8,8 @@ class VideoCallParticipant extends Model
 {
     protected $fillable = [
         'video_call_id',
-        'user_id'
+        'user_id',
+        'peer_id'
     ];
 
     public function videocall()

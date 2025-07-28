@@ -14,6 +14,7 @@ use App\Models\ClassModel;
 use App\Models\Submission;
 use App\Models\Quiz;
 use App\Models\QuizSubmission;
+use App\Models\VideoCall;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
@@ -105,6 +106,11 @@ class StudentController extends Controller
 
         $quizSubmissions = QuizSubmission::where('student_id', auth()->id())->get();
 
+        $videoCall = VideoCall::where('classroom_id', $id)
+            ->where('status', 'started')
+            ->latest()
+            ->first();
+
         // Return data to the frontend
         return Inertia::render('Classroom', [
             'classroom' => $classroom,
@@ -114,6 +120,7 @@ class StudentController extends Controller
             'submissions' => $submissions,
             'quizzes' => $quizzes,
             'quizSubmissions' => $quizSubmissions,
+            'videoCall' => $videoCall,
         ]);
     }
 

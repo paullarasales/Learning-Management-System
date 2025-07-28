@@ -1,12 +1,14 @@
-import { useForm, usePage, router } from "@inertiajs/react";
+import { useForm, usePage, router, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Classroom({
     classroom = {},
     initialThreads = [],
     quizzes = [],
     quizSubmissions = [],
+    videoCall: initialVideoCall,
 }) {
     const { props } = usePage();
     const [activeTab, setActiveTab] = useState("threads");
@@ -29,6 +31,7 @@ export default function Classroom({
             : []
     );
     const [timeLeft, setTimeLeft] = useState(null);
+    const [videoCall, setVideoCall] = useState(initialVideoCall);
 
     // console.log("quiz submissions, ".quizSubmissions);
     // console.log("quizSubmissions:", quizSubmissions);
@@ -41,6 +44,25 @@ export default function Classroom({
     console.count(quizzes.questions);
 
     const now = new Date();
+
+    useEffect(() => {
+        const fetchVideoCall = async () => {
+            try {
+                const response = await axios.get(
+                    `/video-call/check/${classroom.id}`
+                );
+                console.log("The response is:", response);
+                setVideoCall(response.data.videoCall);
+            } catch (error) {
+                console.error("Failed to fetch video call:", error);
+            }
+        };
+
+        fetchVideoCall();
+
+        const interval = setInterval(fetchVideoCall, 5000);
+        return () => clearInterval(interval);
+    }, [classroom.id]);
 
     // Get IDs of completed assignments
     const completedSubmissionIds = submissionsState
@@ -185,6 +207,29 @@ export default function Classroom({
         return `${m}:${s}`;
     };
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            router.reload({ only: ["videoCall"] });
+        }, 10000);
+
+        return () => clearInterval(interval);
+    });
+
+    // handle join call
+    const handleJoinCall = async () => {
+        try {
+            const response = await axios.post(
+                route("video.call.join", videoCall.id)
+            );
+            const callData = response.data;
+
+            window.location.href = `/video-call/${callData.id}`;
+        } catch (error) {
+            console.error("Failed to join video call", error);
+            alert("Something went wrong while joining the call.");
+        }
+    };
+
     return (
         <AuthenticatedLayout>
             <div className="px-4 py-6 min-h-screen">
@@ -196,6 +241,14 @@ export default function Classroom({
                     <p className="text-gray-600">
                         {classroom?.description || ""}
                     </p>
+                    {videoCall?.status === "started" && (
+                        <button
+                            className="bg-green-500 text-white px-4 py-2 rounded"
+                            onClick={handleJoinCall}
+                        >
+                            Join Call
+                        </button>
+                    )}
                 </div>
 
                 {/* Tabs */}
@@ -234,6 +287,12 @@ export default function Classroom({
                                         const isFinished =
                                             finishedQuizIds.includes(quiz.id);
                                         const quesCount = quiz.questions.length;
+
+                                        const now = new Date();
+                                        const quizEndTime = new Date(
+                                            quiz.end_time
+                                        );
+                                        const isExpired = now > quizEndTime;
                                         return (
                                             <li
                                                 key={quiz.id}
@@ -265,22 +324,32 @@ export default function Classroom({
                                                             </span>
                                                         </h1>
                                                     ))}
-                                                <button
-                                                    className={`px-4 py-1 rounded text-md ${
-                                                        isFinished
-                                                            ? "bg-gray-400 cursor-not-allowed"
-                                                            : "bg-blue-500 text-white"
-                                                    }`}
-                                                    onClick={() =>
-                                                        !isFinished &&
-                                                        setSelectedQuiz(quiz)
-                                                    }
-                                                    disabled={isFinished}
-                                                >
-                                                    {isFinished
-                                                        ? "Already Finished"
-                                                        : "Open"}
-                                                </button>
+
+                                                {isExpired ? (
+                                                    <p className="text-red-500 font-medium mt-2">
+                                                        This quiz is no longer
+                                                        available.
+                                                    </p>
+                                                ) : (
+                                                    <button
+                                                        className={`px-4 py-1 rounded text-md ${
+                                                            isFinished
+                                                                ? "bg-gray-400 cursor-not-allowed"
+                                                                : "bg-blue-500 text-white"
+                                                        }`}
+                                                        onClick={() =>
+                                                            !isFinished &&
+                                                            setSelectedQuiz(
+                                                                quiz
+                                                            )
+                                                        }
+                                                        disabled={isFinished}
+                                                    >
+                                                        {isFinished
+                                                            ? "Already Finished"
+                                                            : "Open"}
+                                                    </button>
+                                                )}
                                             </li>
                                         );
                                     })}
