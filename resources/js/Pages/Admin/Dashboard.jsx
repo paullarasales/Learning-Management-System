@@ -1,4 +1,4 @@
-import InstructorLayout from "@/Layouts/InstructorLayout";
+import AdminLayout from "@/Layouts/AdminAuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import Calendar from "react-calendar";
@@ -25,8 +25,8 @@ export default function Dashboard({
     };
 
     return (
-        <InstructorLayout>
-            <Head title="Instructor Dashboard" />
+        <AdminLayout>
+            <Head title="Admin Dashboard" />
             <div className="min-h-screen p-8">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
                     {/* Left Content (2/3) */}
@@ -36,7 +36,7 @@ export default function Dashboard({
                             <div className="bg-white/80 backdrop-blur rounded-3xl shadow-lg p-8 flex flex-col items-center border border-blue-200 hover:shadow-2xl transition-all">
                                 <FaUserGraduate className="text-blue-500 text-5xl mb-3 drop-shadow" />
                                 <div className="text-4xl font-extrabold text-gray-800 mb-1">
-                                    {myStudent.length}
+                                    {myStudents.length}
                                 </div>
                                 <div className="text-blue-600 text-lg font-semibold tracking-wide uppercase">
                                     Students
@@ -234,6 +234,6 @@ export default function Dashboard({
                     </div>
                 </div>
             </div>
-        </InstructorLayout>
+        </AdminLayout>
     );
 }

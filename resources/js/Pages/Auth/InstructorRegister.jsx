@@ -38,6 +38,7 @@ export default function InstructorRegister() {
                     )}
 
                     <form onSubmit={submit}>
+                        <h1>Register as Instructor</h1>
                         <div>
                             <InputLabel
                                 htmlFor="firstname"

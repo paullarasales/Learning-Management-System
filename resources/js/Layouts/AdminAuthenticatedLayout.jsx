@@ -54,18 +54,18 @@ export default function InstructorLayout({ header, children }) {
                         <h1 className="text-white text-lg">Class</h1>
                     </Link>
                     <Link
-                        href={route("classroom.create")}
-                        // active={route().current("instructor.classList")}
-                        className="flex items-center gap-2"
-                    >
-                        <h1 className="text-white text-lg">Manage</h1>
-                    </Link>
-                    <Link
                         href={route("admin.profile")}
                         // active={route().current("admin.profile")}
                         className="flex items-center gap-2"
                     >
                         <h1 className="text-white text-lg">Profile</h1>
+                    </Link>
+                    <Link
+                        href={route("students.account")}
+                        // active={route().current("admin.profile")}
+                        className="flex items-center gap-2"
+                    >
+                        <h1 className="text-white text-lg">Students</h1>
                     </Link>
                 </nav>
             </aside>

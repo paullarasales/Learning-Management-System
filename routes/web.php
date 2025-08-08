@@ -54,6 +54,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
     Route::post('/admin/classroom/{id}/add-student', [AdminController::class, 'addStudent'])->name('admin.classroom.addStudent');
+    Route::get('/admin/students', [AdminController::class, 'studentsAccount'])->name('students.account');
 });
 
 Route::middleware(['auth', 'instructor'])->group(function () {

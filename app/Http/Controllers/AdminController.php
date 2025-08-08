@@ -295,5 +295,18 @@ class AdminController extends Controller
         return back()->with('success', 'Student added by instructor!');
     }
 
+    public function studentsAccount()
+    {
+        return Inertia::render('Admin/Students');
+    }
 
+    // json response
+    public function getStudents()
+    {
+        $students = User::where('role', 'student')->get();
+
+        return response()->json([
+            'students' => $students
+        ]);
+    }
 }
