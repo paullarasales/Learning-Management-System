@@ -309,4 +309,13 @@ class AdminController extends Controller
             'students' => $students
         ]);
     }
+
+    public function resetPassword(Request $request, $id)
+    {
+        $request->validate([
+            'password',
+        ]);
+
+
+    }
 }
