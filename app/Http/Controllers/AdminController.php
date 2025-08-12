@@ -313,9 +313,15 @@ class AdminController extends Controller
     public function resetPassword(Request $request, $id)
     {
         $request->validate([
-            'password',
+            'password' => 'required|min:8',
         ]);
+        
+        $student = User::findOrFail($id);
+        $student->password = bcrypt($request->password);
+        $student->save();
 
-
+        return response()->json([
+            'message' => 'Password reset successful!'
+        ]);
     }
 }
